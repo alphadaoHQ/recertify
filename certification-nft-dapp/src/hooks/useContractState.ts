@@ -14,18 +14,26 @@ export const useContractState = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchState = useCallback(async () => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] fetchState called - userAddress:`, userAddress);
+    
     setLoading(true);
     setError(null);
 
     try {
+      console.log(`[${timestamp}] Making getState API call...`);
       const contractState = await contractService.getState();
+      console.log(`[${timestamp}] getState successful`);
       setState(contractState);
 
       if (userAddress) {
         const owner = addressesEqual(userAddress, contractState.owner);
         setIsOwner(owner);
 
+        console.log(`[${timestamp}] Making isAdmin API call...`);
         const admin = await contractService.isAdmin(userAddress);
+        console.log(`[${timestamp}] isAdmin successful`);
+        
         // Check if user is the hardcoded admin wallet
         const isHardcodedAdmin = addressesEqual(
           userAddress,
@@ -40,13 +48,21 @@ export const useContractState = () => {
       const errorMsg =
         err instanceof Error ? err.message : "Failed to fetch contract state";
       setError(errorMsg);
-      console.error("Contract state error:", err);
+      console.error(`[${timestamp}] Contract state error:`, err);
+      
+      // Log specific 429 error details
+      if (err instanceof Error && err.message.includes('429')) {
+        console.error(`[${timestamp}] RATE LIMIT HIT - Too many requests to TON API`);
+      }
     } finally {
       setLoading(false);
+      console.log(`[${timestamp}] fetchState completed`);
     }
   }, [userAddress]);
 
   useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] useEffect triggered - fetchState dependency changed`);
     fetchState();
   }, [fetchState]);
 

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+/* The custom variant and @theme/@apply tailwind-only at-rules were removed/converted
+   so this file remains valid plain CSS; Tailwind-specific configuration belongs
+   in tailwind.config.js or PostCSS/Tailwind input files. */
 
 :root {
   /* Updated theme to match professional blockchain dashboard aesthetic */
@@ -37,44 +39,8 @@
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.2 0 0);
   --sidebar-ring: oklch(0.65 0.2 264);
-}
 
-.dark {
-  --background: oklch(0.08 0 0);
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.12 0 0);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.12 0 0);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.65 0.2 264);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.2 0 0);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.62 0.25 29);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.2 0 0);
-  --input: oklch(0.15 0 0);
-  --ring: oklch(0.65 0.2 264);
-  --chart-1: oklch(0.65 0.2 264);
-  --chart-2: oklch(0.7 0.15 162);
-  --chart-3: oklch(0.75 0.18 70);
-  --chart-4: oklch(0.6 0.25 304);
-  --chart-5: oklch(0.65 0.24 16);
-  --sidebar: oklch(0.1 0 0);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.65 0.2 264);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.15 0 0);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.2 0 0);
-  --sidebar-ring: oklch(0.65 0.2 264);
-}
-
-@theme inline {
+  /* Mapped theme variables (moved from @theme inline) */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-background: var(--background);
@@ -113,13 +79,73 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Simple CSS variables for utility colors from the removed theme JS block */
+  --magic-purple: #a855f7;
+  --magic-pink: #ec4899;
+  --dark-bg: #0a0a0a;
+  --accent-blue: #3b82f6;
+  --accent-green: #22c55e;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Dark-mode custom properties retained for .dark usage */
+.dark {
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.65 0.2 264);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.18 0 0);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.15 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.2 0 0);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.62 0.25 29);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.65 0.2 264);
+  --chart-1: oklch(0.65 0.2 264);
+  --chart-2: oklch(0.7 0.15 162);
+  --chart-3: oklch(0.75 0.18 70);
+  --chart-4: oklch(0.6 0.25 304);
+  --chart-5: oklch(0.65 0.24 16);
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.65 0.2 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.15 0 0);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.65 0.2 264);
+}
+
+/* Replace Tailwind-only @layer/@apply usage with standard CSS so parsers don't error */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-color: var(--border);
+  /* outline color fallback; color-mix may be unsupported in some browsers */
+  outline-color: var(--color-ring, rgba(0,0,0,0.0));
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial);
+}
+
+/* Converted the theme animation/keyframes into plain CSS utilities */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
 }
