@@ -348,8 +348,8 @@ body {
 
 /*Redesigned HomePage*/
 
-@import "tailwindcss/preflight";
-@tailwind utilities;
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
 
 @keyframes fadeIn {

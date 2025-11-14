@@ -1,8 +1,3 @@
-// Test file temporarily disabled - vitest needs to be installed
-// To enable tests, run: npm install --save-dev vitest @vitest/ui
-// Then uncomment the code below
-
-/*
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   verifyReferral,
@@ -10,6 +5,7 @@ import {
   VerifyTaskResult,
 } from "@/lib/taskVerification";
 
+// Mock Supabase
 vi.mock("@/lib/supabaseClient", () => ({
   default: {
     from: vi.fn(),
@@ -100,8 +96,3 @@ describe("taskVerification", () => {
     });
   });
 });
-*/
-
-// Placeholder export to prevent file from being empty
-export const testPlaceholder = true;
-

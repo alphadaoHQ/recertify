@@ -1,7 +1,6 @@
-import { Award, Loader2, CheckCircle, ExternalLink } from "lucide-react";
+import { Award, Loader2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { useContract } from "@/hooks/useContract";
-import { useContractState } from "@/hooks/useContractState";
 import { validateAddress } from "@/lib/utils/address";
 
 interface MintFormProps {
@@ -11,15 +10,11 @@ interface MintFormProps {
 export const MintForm = ({ onSuccess }: MintFormProps) => {
   const [address, setAddress] = useState("");
   const [validationError, setValidationError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [lastMintedTokenId, setLastMintedTokenId] = useState<number | null>(null);
   const { mint, loading, error } = useContract();
-  const { refetch, startPolling, state } = useContractState();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setValidationError("");
-    setSuccessMessage("");
 
     if (!address.trim()) {
       setValidationError("Enter student address");
@@ -31,45 +26,10 @@ export const MintForm = ({ onSuccess }: MintFormProps) => {
       return;
     }
 
-    // Record current token count before mint
-    const previousTokenCount = state?.total || 0;
-
-    const result = await mint(address, () => {
-      // Immediately start polling for state updates
-      console.log("Transaction sent, starting to poll for state changes...");
-      startPolling(30000); // Poll for 30 seconds
-    });
-
+    const result = await mint(address);
     if (result.success) {
       setAddress("");
-      
-      // Set success message
-      setSuccessMessage(`✅ Mint transaction sent! Waiting for blockchain confirmation...`);
-      
-      // Wait a bit then check if nextId increased
-      setTimeout(async () => {
-        try {
-          await refetch();
-          const newTokenCount = state?.total || previousTokenCount;
-          
-          if (newTokenCount > previousTokenCount) {
-            const newTokenId = previousTokenCount + 1;
-            setLastMintedTokenId(newTokenId);
-            setSuccessMessage(
-              `✅ NFT Minted! Token ID: #${newTokenId} for ${address.slice(0, 6)}...${address.slice(-4)}`
-            );
-            onSuccess?.();
-          }
-        } catch (err) {
-          console.error("Error refreshing state:", err);
-        }
-      }, 2000);
-
-      // Clear success after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage("");
-        setLastMintedTokenId(null);
-      }, 8000);
+      onSuccess?.();
     }
   };
 
@@ -111,25 +71,6 @@ export const MintForm = ({ onSuccess }: MintFormProps) => {
         {error && (
           <div className="p-3 bg-red-900/50 border border-red-700 rounded-lg">
             <p className="text-sm text-red-300">{error}</p>
-          </div>
-        )}
-        {successMessage && (
-          <div className="p-3 bg-green-900/50 border border-green-700 rounded-lg flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-            <p className="text-sm text-green-300">{successMessage}</p>
-          </div>
-        )}
-        {lastMintedTokenId && (
-          <div className="p-3 bg-blue-900/50 border border-blue-700 rounded-lg">
-            <a
-              href={`https://testnet.tonscan.org/nft/${lastMintedTokenId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-300 hover:text-blue-200 flex items-center gap-2 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              View on TON Explorer
-            </a>
           </div>
         )}
         <button

@@ -1,9 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import BadgesPanel from "@/components/BadgesPanel";
+import { RiTrophyFill, RiUser3Fill } from "react-icons/ri";
 
 interface RewardsTabProps {
   userAddress?: string | null;
+}
+
+function shortAddr(addr: string | null | undefined) {
+  if (!addr) return "—";
+  return addr.slice(0, 6) + "…" + addr.slice(-4);
 }
 
 export default function RewardsTab({ userAddress }: RewardsTabProps) {
@@ -37,30 +43,54 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
   return (
     <div className="p-4">
       <div className="mb-4">
-        <h3 className="text-lg font-bold">Rewards & Leaderboards</h3>
-        <p className="text-sm text-gray-500">See top performers and your achievements</p>
+        <h3 className="text-xl font-extrabold">Rewards & Leaderboards</h3>
+        <p className="text-sm text-white/70">See top performers and your achievements</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="rounded-lg border p-3">
-          <h4 className="font-semibold mb-2">Top by Points</h4>
-          <ol className="list-decimal list-inside">
+        <div className="rounded-2xl border border-white/6 p-4 bg-gradient-to-br from-white/3 to-white/2">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <RiTrophyFill className="w-5 h-5 text-yellow-400" />
+              <h4 className="font-semibold">Top by Points</h4>
+            </div>
+            <span className="text-xs text-white/70">Top 10</span>
+          </div>
+          <ol className="space-y-2">
             {leaders.map((u, idx) => (
-              <li key={u.user_address} className="flex justify-between">
-                <span className="truncate">{u.user_address}</span>
-                <span className="font-bold">{u.points || 0} pts</span>
+              <li key={u.user_address} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-700 to-purple-500 flex items-center justify-center text-white font-mono">{(idx+1)}</div>
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{shortAddr(u.user_address)}</div>
+                    <div className="text-xs text-white/60">{u.user_address}</div>
+                  </div>
+                </div>
+                <div className="font-semibold">{u.points || 0} pts</div>
               </li>
             ))}
           </ol>
         </div>
 
-        <div className="rounded-lg border p-3">
-          <h4 className="font-semibold mb-2">Top Referrers</h4>
-          <ol className="list-decimal list-inside">
+        <div className="rounded-2xl border border-white/6 p-4 bg-gradient-to-br from-white/3 to-white/2">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <RiUser3Fill className="w-5 h-5 text-cyan-400" />
+              <h4 className="font-semibold">Top Referrers</h4>
+            </div>
+            <span className="text-xs text-white/70">Top 10</span>
+          </div>
+          <ol className="space-y-2">
             {referrers.map((u, idx) => (
-              <li key={u.user_address} className="flex justify-between">
-                <span className="truncate">{u.user_address}</span>
-                <span className="font-bold">{u.referral_count || 0}</span>
+              <li key={u.user_address} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-700 to-sky-500 flex items-center justify-center text-white font-mono">{(idx+1)}</div>
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{shortAddr(u.user_address)}</div>
+                    <div className="text-xs text-white/60">{u.user_address}</div>
+                  </div>
+                </div>
+                <div className="font-semibold">{u.referral_count || 0}</div>
               </li>
             ))}
           </ol>

@@ -50,12 +50,14 @@ export function TabBar({ isDarkMode, activeTab, handleTabChange }: TabBarProps) 
               activeTab === 'tasks'
                 ? `tab-active transform scale-110 ${
                     isDarkMode
-                      ? "bg-[#1da1f2]/20 text-[#1da1f2]"
-                      : "bg-[#1da1f2]/20 text-[#1da1f2]"
+                      ? "bg-purple-800/30 text-purple-300 border border-purple-700 shadow-md shadow-purple-900/30"
+                      : "bg-purple-100 text-purple-950 border border-purple-200 shadow-md shadow-purple-200/60"
                   }`
-                : `text-[#536471] hover:text-[#1da1f2] ${
-                    isDarkMode ? "hover:text-[#1da1f2]" : ""
-                  }`
+                : `${
+                    isDarkMode
+                      ? "text-purple-400 hover:text-purple-300 hover:bg-purple-900/30"
+                      : "text-purple-800 hover:text-purple-950 hover:bg-purple-100/70"
+                  } transition-all duration-300 rounded-xl`
             }`}
           >
             <CheckSquare className={`w-6 h-6 mb-1 transition-all duration-300 ${

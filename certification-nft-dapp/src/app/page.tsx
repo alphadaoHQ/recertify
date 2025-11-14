@@ -9,7 +9,11 @@ import { GalleryTab } from "@/components/GalleryTab";
 import { TasksTab } from "@/components/TasksTabRealtime";
 import { AdminTab } from "@/components/AdminTab";
 import { TabBar } from "@/components/TabBar";
-import RewardsTab from "@/components/RewardsTab";
+import dynamic from "next/dynamic";
+const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
+  ssr: false,
+  loading: () => <div className="p-4">Loading rewards...</div>,
+});
 
 export default function Home() {
   const userAddress = useTonAddress();
@@ -102,13 +106,12 @@ export default function Home() {
     setPreviousTab(activeTab);
     setIsTransitioning(true);
 
+    // Switch tab immediately to avoid perceived lag; keep the animation state for 300ms
+    setActiveTab(newTab);
     setTimeout(() => {
-      setActiveTab(newTab);
-      setTimeout(() => {
-        setIsTransitioning(false);
-        setPreviousTab(null);
-      }, 300);
-    }, 150);
+      setIsTransitioning(false);
+      setPreviousTab(null);
+    }, 300);
   };
 
   // Auto-go after some seconds, allow cancel or immediate "Go"
@@ -160,7 +163,7 @@ export default function Home() {
         setShowWelcomeModal={setShowWelcomeModal}
       />
 
-      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} handleTabChange={handleTabChange} />
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <main className="flex-1 px-4 py-4 pb-24 overflow-y-auto">
         {/* Tab Content */}

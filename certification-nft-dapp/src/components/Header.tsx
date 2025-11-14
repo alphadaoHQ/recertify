@@ -1,17 +1,12 @@
 import { TonConnectButton } from "@tonconnect/ui-react";
-import { Sun, Moon, Sparkles, Award } from "lucide-react";
-import { useTonAddress } from "@tonconnect/ui-react";
-import { useUnclaimedRewards } from "@/hooks/useUnclaimedRewards";
+import { Sun, Moon, Sparkles } from "lucide-react";
 
 interface HeaderProps {
   isDarkMode: boolean;
   toggleTheme: () => void;
-  handleTabChange: (tab: string) => void;
 }
 
-export function Header({ isDarkMode, toggleTheme, handleTabChange }: HeaderProps) {
-  const userAddress = useTonAddress();
-  const { unclaimedCount } = useUnclaimedRewards(userAddress);
+export function Header({ isDarkMode, toggleTheme }: HeaderProps) {
   return (
     <header
       className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-all duration-500 px-3 sm:px-4 py-2.5 sm:py-3.5 ${
@@ -77,32 +72,6 @@ export function Header({ isDarkMode, toggleTheme, handleTabChange }: HeaderProps
 
         {/* Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-          {/* Rewards Quick Link */}
-          <button
-            onClick={() => handleTabChange('rewards')}
-            className={`group relative p-1.5 sm:p-2.5 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 ${
-              isDarkMode
-                ? "text-purple-300 hover:text-purple-200 hover:bg-purple-900/40 border border-purple-800/30"
-                : "text-purple-700 hover:text-purple-900 hover:bg-purple-100 border border-purple-200/50"
-            }`}
-            aria-label="Rewards"
-          >
-            <div
-              className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                isDarkMode ? "bg-purple-600/20 blur-sm" : "bg-purple-400/20 blur-sm"
-              }`}
-            />
-            <div className="relative z-10 flex items-center gap-1.5">
-              <div className="relative">
-                <Award className="w-4 h-4 sm:w-5 sm:h-5" />
-                {unclaimedCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
-                    {unclaimedCount > 9 ? "9+" : unclaimedCount}
-                  </span>
-                )}
-              </div>
-            </div>
-          </button>
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}

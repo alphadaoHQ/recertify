@@ -9,7 +9,11 @@ import {
 import { useAnimateOnScroll } from "@/hooks/useAnimateOnScroll";
 import { loadUserStats, saveUserStats, hasCheckedInToday, getTodayDateString, shouldResetCheckIn } from "@/lib/supabaseService";
 import { EXTERNAL_LINKS, generateReferralLink, generateShareText, shareOrCopyLink } from "@/lib/externalLinks";
-import RewardsTab from "@/components/RewardsTab";
+import dynamic from "next/dynamic";
+const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
+  ssr: false,
+  loading: () => <div className="p-3">Loading rewards...</div>,
+});
 
 type Category = "All" | "Social" | "Engagement" | "Learning" | "Referral";
 type Frequency = "Daily" | "Weekly" | "Special";

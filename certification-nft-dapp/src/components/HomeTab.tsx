@@ -84,13 +84,6 @@ export function HomeTab({
         <BookOpen className="w-5 h-5" />
         View Gallery
       </button>
-      <button
-        onClick={() => handleTabChange("rewards")}
-        className="px-6 py-3 bg-white/5 border border-purple-200 text-purple-200 font-semibold rounded-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"
-      >
-        <Award className="w-4 h-4 text-yellow-300" />
-        Rewards
-      </button>
       <TonConnectButton key="home-connect" />
     </div>
 
