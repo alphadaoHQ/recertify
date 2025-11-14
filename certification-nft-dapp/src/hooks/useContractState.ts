@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
 import { useTonAddress } from "@tonconnect/ui-react";
+import { useCallback, useEffect, useState } from "react";
 import { contractService } from "@/lib/contract/contractService";
 import { addressesEqual } from "@/lib/utils/address";
 import type { ContractState } from "@/types";
@@ -13,11 +13,14 @@ export const useContractState = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchState = useCallback(async () => {
+    console.log("[useContractState] fetchState called");
     setLoading(true);
     setError(null);
 
     try {
+      console.log("[useContractState] Calling contractService.getState()");
       const contractState = await contractService.getState();
+      console.log("[useContractState] contractState received:", contractState);
       setState(contractState);
 
       if (userAddress) {

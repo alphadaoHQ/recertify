@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Loader2, ExternalLink, FileText, AlertCircle } from "lucide-react";
+import { AlertCircle, ExternalLink, FileText, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface IPFSFile {
   name: string;
@@ -71,7 +71,7 @@ export const IPFSCollectionViewer = () => {
 
   useEffect(() => {
     fetchCollection();
-  }, []);
+  }, [fetchCollection]);
 
   const renderMetadata = (metadata: any) => {
     if (!metadata) return null;

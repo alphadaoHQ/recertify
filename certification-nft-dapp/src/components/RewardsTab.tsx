@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import BadgesPanel from "@/components/BadgesPanel";
 import { RiTrophyFill, RiUser3Fill } from "react-icons/ri";
+import BadgesPanel from "@/components/BadgesPanel";
 
 interface RewardsTabProps {
   userAddress?: string | null;
@@ -9,7 +9,7 @@ interface RewardsTabProps {
 
 function shortAddr(addr: string | null | undefined) {
   if (!addr) return "—";
-  return addr.slice(0, 6) + "…" + addr.slice(-4);
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
 export default function RewardsTab({ userAddress }: RewardsTabProps) {
@@ -29,7 +29,11 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
         setReferrers(jsonR.success ? jsonR.data : []);
 
         if (userAddress) {
-          const resA = await fetch(`/api/user-achievements`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userAddress }) });
+          const resA = await fetch(`/api/user-achievements`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userAddress }),
+          });
           const jsonA = await resA.json();
           setAchievements(jsonA.success ? jsonA.data : []);
         }
@@ -44,7 +48,9 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
     <div className="p-4">
       <div className="mb-4">
         <h3 className="text-xl font-extrabold">Rewards & Leaderboards</h3>
-        <p className="text-sm text-white/70">See top performers and your achievements</p>
+        <p className="text-sm text-white/70">
+          See top performers and your achievements
+        </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -58,12 +64,21 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
           </div>
           <ol className="space-y-2">
             {leaders.map((u, idx) => (
-              <li key={u.user_address} className="flex items-center justify-between gap-3">
+              <li
+                key={u.user_address}
+                className="flex items-center justify-between gap-3"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-700 to-purple-500 flex items-center justify-center text-white font-mono">{(idx+1)}</div>
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-700 to-purple-500 flex items-center justify-center text-white font-mono">
+                    {idx + 1}
+                  </div>
                   <div className="min-w-0">
-                    <div className="truncate font-medium">{shortAddr(u.user_address)}</div>
-                    <div className="text-xs text-white/60">{u.user_address}</div>
+                    <div className="truncate font-medium">
+                      {shortAddr(u.user_address)}
+                    </div>
+                    <div className="text-xs text-white/60">
+                      {u.user_address}
+                    </div>
                   </div>
                 </div>
                 <div className="font-semibold">{u.points || 0} pts</div>
@@ -82,12 +97,21 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
           </div>
           <ol className="space-y-2">
             {referrers.map((u, idx) => (
-              <li key={u.user_address} className="flex items-center justify-between gap-3">
+              <li
+                key={u.user_address}
+                className="flex items-center justify-between gap-3"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-700 to-sky-500 flex items-center justify-center text-white font-mono">{(idx+1)}</div>
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-700 to-sky-500 flex items-center justify-center text-white font-mono">
+                    {idx + 1}
+                  </div>
                   <div className="min-w-0">
-                    <div className="truncate font-medium">{shortAddr(u.user_address)}</div>
-                    <div className="text-xs text-white/60">{u.user_address}</div>
+                    <div className="truncate font-medium">
+                      {shortAddr(u.user_address)}
+                    </div>
+                    <div className="text-xs text-white/60">
+                      {u.user_address}
+                    </div>
                   </div>
                 </div>
                 <div className="font-semibold">{u.referral_count || 0}</div>
@@ -98,7 +122,10 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
       </div>
 
       <div className="mt-6">
-        <BadgesPanel userAddress={userAddress} initialAchievements={achievements} />
+        <BadgesPanel
+          userAddress={userAddress}
+          initialAchievements={achievements}
+        />
       </div>
     </div>
   );

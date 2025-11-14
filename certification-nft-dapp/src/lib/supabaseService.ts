@@ -11,7 +11,9 @@ export interface UserStats {
 /**
  * Load user stats from Supabase, with localStorage fallback
  */
-export async function loadUserStats(userAddress: string): Promise<UserStats | null> {
+export async function loadUserStats(
+  userAddress: string,
+): Promise<UserStats | null> {
   try {
     const { data, error } = await supabase
       .from("user_stats")
@@ -25,10 +27,7 @@ export async function loadUserStats(userAddress: string): Promise<UserStats | nu
 
     if (data) {
       // Persist to localStorage as backup
-      localStorage.setItem(
-        `tasks_user_${userAddress}`,
-        JSON.stringify(data),
-      );
+      localStorage.setItem(`tasks_user_${userAddress}`, JSON.stringify(data));
       return { user_address: userAddress, ...data };
     }
   } catch (err) {
@@ -58,10 +57,7 @@ export async function saveUserStats(
 ): Promise<boolean> {
   // Always save to localStorage first
   try {
-    localStorage.setItem(
-      `tasks_user_${userAddress}`,
-      JSON.stringify(stats),
-    );
+    localStorage.setItem(`tasks_user_${userAddress}`, JSON.stringify(stats));
   } catch (_e) {
     // ignore
   }
@@ -159,7 +155,10 @@ export async function getTopReferrers(limit: number = 10) {
 /**
  * Award an achievement to a user (idempotent)
  */
-export async function awardAchievement(userAddress: string, achievementId: string) {
+export async function awardAchievement(
+  userAddress: string,
+  achievementId: string,
+) {
   try {
     // get existing achievements
     const { data } = await supabase
@@ -168,15 +167,25 @@ export async function awardAchievement(userAddress: string, achievementId: strin
       .eq("user_address", userAddress)
       .single();
 
-    if (data && Array.isArray(data.achievements) && data.achievements.includes(achievementId)) {
+    if (
+      data &&
+      Array.isArray(data.achievements) &&
+      data.achievements.includes(achievementId)
+    ) {
       return true; // already has achievement
     }
 
-    const newAchievements = data && Array.isArray(data.achievements) ? [...data.achievements, achievementId] : [achievementId];
+    const newAchievements =
+      data && Array.isArray(data.achievements)
+        ? [...data.achievements, achievementId]
+        : [achievementId];
 
     const { error } = await supabase
       .from("user_stats")
-      .upsert({ user_address: userAddress, achievements: newAchievements }, { onConflict: "user_address" });
+      .upsert(
+        { user_address: userAddress, achievements: newAchievements },
+        { onConflict: "user_address" },
+      );
 
     if (error) {
       console.warn("Failed to award achievement:", error);
@@ -193,7 +202,9 @@ export async function awardAchievement(userAddress: string, achievementId: strin
 /**
  * Load user's achievements
  */
-export async function getUserAchievements(userAddress: string): Promise<string[]> {
+export async function getUserAchievements(
+  userAddress: string,
+): Promise<string[]> {
   try {
     const { data, error } = await supabase
       .from("user_stats")
@@ -211,7 +222,9 @@ export async function getUserAchievements(userAddress: string): Promise<string[]
 /**
  * Increment referral count for a referrer (create row if missing)
  */
-export async function incrementReferralCount(referrerAddress: string): Promise<boolean> {
+export async function incrementReferralCount(
+  referrerAddress: string,
+): Promise<boolean> {
   try {
     const { data } = await supabase
       .from("user_stats")
@@ -220,7 +233,8 @@ export async function incrementReferralCount(referrerAddress: string): Promise<b
       .single();
 
     if (data) {
-      const current = typeof data.referral_count === "number" ? data.referral_count : 0;
+      const current =
+        typeof data.referral_count === "number" ? data.referral_count : 0;
       const { error } = await supabase
         .from("user_stats")
         .update({ referral_count: current + 1 })
@@ -233,9 +247,13 @@ export async function incrementReferralCount(referrerAddress: string): Promise<b
     }
 
     // Insert new row
-    const { error } = await supabase
-      .from("user_stats")
-      .insert({ user_address: referrerAddress, referral_count: 1, points: 0, daily_streak: 0, claimed_task_ids: [] });
+    const { error } = await supabase.from("user_stats").insert({
+      user_address: referrerAddress,
+      referral_count: 1,
+      points: 0,
+      daily_streak: 0,
+      claimed_task_ids: [],
+    });
 
     if (error) {
       console.warn("Failed to create referrer row:", error);
@@ -248,4 +266,3 @@ export async function incrementReferralCount(referrerAddress: string): Promise<b
     return false;
   }
 }
-

@@ -42,7 +42,7 @@ export class ContractService {
             error.message.includes("too many requests"));
 
         if (isRateLimit) {
-          const delay = Math.min(baseDelay * Math.pow(2, i), maxDelay);
+          const delay = Math.min(baseDelay * 2 ** i, maxDelay);
           console.log(
             `RATE LIMIT: Retrying in ${delay}ms (attempt ${i + 1}/${maxRetries})`,
           );
@@ -84,21 +84,33 @@ export class ContractService {
     );
 
     return this.retryWithBackoff(async () => {
+      console.log(
+        `[${timestamp}] ContractService.getState() - Opening contract`,
+      );
       const contract = this.client.open(
         CertificationNFT.fromAddress(this.contractAddress),
+      );
+      console.log(
+        `[${timestamp}] ContractService.getState() - Contract opened, calling getState()`,
       );
 
       const state = await contract.getState();
       console.log(
-        `[${timestamp}] ContractService.getState() - API call successful`,
+        `[${timestamp}] ContractService.getState() - API call successful, state:`,
+        state,
       );
 
-      return {
+      const result = {
         owner: state.owner.toString(),
         total: state.total,
         nextId: state.nextId,
         base_uri: state.base_uri,
       };
+      console.log(
+        `[${timestamp}] ContractService.getState() - Returning result:`,
+        result,
+      );
+      return result;
     });
   }
 

@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
+import {
+  RiFireFill,
+  RiMedalFill,
+  RiSearch2Line,
+  RiUserAddFill,
+} from "react-icons/ri";
 import { getUserAchievements } from "@/lib/supabaseService";
-import { RiMedalFill, RiFireFill, RiUserAddFill, RiSearch2Line } from "react-icons/ri";
 
 interface BadgesPanelProps {
   userAddress?: string | null;
@@ -9,13 +14,36 @@ interface BadgesPanelProps {
 }
 
 const BADGES = [
-  { id: "first_claim", title: "First Claim", description: "Claim your first task", Icon: RiMedalFill },
-  { id: "streak_7", title: "7-Day Streak", description: "Check in 7 days in a row", Icon: RiFireFill },
-  { id: "referrer_1", title: "First Referral", description: "Refer your first user", Icon: RiUserAddFill },
-  { id: "cert_viewer", title: "Certificate Explorer", description: "View 5 certificates", Icon: RiSearch2Line },
+  {
+    id: "first_claim",
+    title: "First Claim",
+    description: "Claim your first task",
+    Icon: RiMedalFill,
+  },
+  {
+    id: "streak_7",
+    title: "7-Day Streak",
+    description: "Check in 7 days in a row",
+    Icon: RiFireFill,
+  },
+  {
+    id: "referrer_1",
+    title: "First Referral",
+    description: "Refer your first user",
+    Icon: RiUserAddFill,
+  },
+  {
+    id: "cert_viewer",
+    title: "Certificate Explorer",
+    description: "View 5 certificates",
+    Icon: RiSearch2Line,
+  },
 ];
 
-export default function BadgesPanel({ userAddress, initialAchievements = [] }: BadgesPanelProps) {
+export default function BadgesPanel({
+  userAddress,
+  initialAchievements = [],
+}: BadgesPanelProps) {
   const [owned, setOwned] = useState<string[]>(initialAchievements || []);
 
   useEffect(() => {
@@ -26,7 +54,7 @@ export default function BadgesPanel({ userAddress, initialAchievements = [] }: B
       }
     }
     load();
-  }, [userAddress]);
+  }, [userAddress, initialAchievements]);
 
   async function handleClaim(badgeId: string) {
     if (!userAddress) return;
@@ -62,20 +90,29 @@ export default function BadgesPanel({ userAddress, initialAchievements = [] }: B
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-xl ${isOwned ? "bg-white/10" : "bg-white/5"}`}>
-                  <Icon className={`w-6 h-6 ${isOwned ? "text-white" : "text-purple-300"}`} />
+                <div
+                  className={`p-2 rounded-xl ${isOwned ? "bg-white/10" : "bg-white/5"}`}
+                >
+                  <Icon
+                    className={`w-6 h-6 ${isOwned ? "text-white" : "text-purple-300"}`}
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-3">
                     <div className="font-semibold truncate">{b.title}</div>
-                    <div className="text-xs opacity-80">{isOwned ? "Owned" : ""}</div>
+                    <div className="text-xs opacity-80">
+                      {isOwned ? "Owned" : ""}
+                    </div>
                   </div>
-                  <div className="text-xs text-white/70 mt-1 truncate">{b.description}</div>
+                  <div className="text-xs text-white/70 mt-1 truncate">
+                    {b.description}
+                  </div>
                 </div>
               </div>
               <div className="mt-3 flex justify-end">
                 {!isOwned && (
                   <button
+                    type="button"
                     onClick={() => handleClaim(b.id)}
                     className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium shadow-sm"
                   >

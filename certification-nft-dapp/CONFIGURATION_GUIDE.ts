@@ -1,6 +1,6 @@
 /**
  * Quick Configuration Guide for Tasks System
- * 
+ *
  * This file provides easy reference for common configuration changes
  */
 
@@ -8,7 +8,7 @@
 // 1. UPDATE TUTORIAL VIDEO URL
 // ============================================
 // File: src/lib/externalLinks.ts
-// 
+//
 // Find this line:
 //   tutorialVideo: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 //
@@ -58,7 +58,7 @@
 // 5. ADD NEW TASKS
 // ============================================
 // File: src/components/TasksTabRealtime.tsx
-// 
+//
 // Add task to initial state array:
 //   {
 //     id: "r2",
@@ -117,17 +117,17 @@ export async function verifyTwitterFollow(userHandle: string): Promise<VerifyTas
 //
 // Uses existing TON integration already in the app:
 //   import { Contract } from '@ton/ton';
-//   
+//
 //   const nftCollection = new Contract(NFT_COLLECTION_ADDRESS);
 //   const userNFTs = await nftCollection.getCollectionIndex(userAddress);
-//   
+//
 //   return { success: userNFTs.length > 0, message: "..." };
 
 // ============================================
 // 9. CUSTOMIZE TASK REWARDS
 // ============================================
 // File: src/components/TasksTabRealtime.tsx
-// 
+//
 // Find each task in initial state and update 'reward' value:
 //   reward: 50,  // Change to desired points
 //
@@ -144,7 +144,7 @@ export async function verifyTwitterFollow(userHandle: string): Promise<VerifyTas
 // Function: calculateLevel()
 //
 // Current: level = floor(points / 500) + 1
-// 
+//
 // To change progression speed:
 //   - Slower: floor(points / 1000) + 1  (more grindy)
 //   - Faster: floor(points / 250) + 1   (more rewarding)

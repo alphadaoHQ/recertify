@@ -1,5 +1,5 @@
 import { TonConnectButton } from "@tonconnect/ui-react";
-import { Sun, Moon, Sparkles } from "lucide-react";
+import { Moon, Sparkles, Sun } from "lucide-react";
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -74,6 +74,7 @@ export function Header({ isDarkMode, toggleTheme }: HeaderProps) {
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Theme Toggle */}
           <button
+            type="button"
             onClick={toggleTheme}
             className={`group relative p-1.5 sm:p-2.5 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 ${
               isDarkMode
@@ -114,7 +115,7 @@ export function Header({ isDarkMode, toggleTheme }: HeaderProps) {
               }`}
             />
             <div className="scale-90 sm:scale-100 px-1">
-              <TonConnectButton key="header-connect"/>
+              <TonConnectButton key="header-connect" />
             </div>
           </div>
         </div>

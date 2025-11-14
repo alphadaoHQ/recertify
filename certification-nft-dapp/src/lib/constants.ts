@@ -16,4 +16,5 @@ export const OPCODES = {
   ADD_ADMIN: 3599441591,
 } as const;
 export const CERTIFICATE_NFT_DAPP_URL = "https://alphadao.vercel.app/";
-export const METADATA_BASE_URI = "https://peach-fast-clam-38.mypinata.cloud/ipfs/bafybeiedq3l22745663ebspnmozssslvek4roaw77lhn75eq3wipxqbxze/";
+export const METADATA_BASE_URI =
+  "https://peach-fast-clam-38.mypinata.cloud/ipfs/bafybeiedq3l22745663ebspnmozssslvek4roaw77lhn75eq3wipxqbxze/";

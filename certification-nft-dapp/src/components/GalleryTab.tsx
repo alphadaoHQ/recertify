@@ -1,7 +1,7 @@
-import { CertificateShelf } from "@/components/CertificateShelf";
 import { Image as ImageIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CertificateShelf } from "@/components/CertificateShelf";
 import { METADATA_BASE_URI } from "@/lib/constants";
-import { useState, useEffect } from "react";
 
 interface GalleryTabProps {
   isDarkMode: boolean;
@@ -19,9 +19,11 @@ interface CertificatePreview {
 export function GalleryTab({
   isDarkMode,
   isTransitioning,
-  previousTab
+  previousTab,
 }: GalleryTabProps) {
-  const [certificatePreviews, setCertificatePreviews] = useState<CertificatePreview[]>([]);
+  const [certificatePreviews, setCertificatePreviews] = useState<
+    CertificatePreview[]
+  >([]);
 
   useEffect(() => {
     const loadCertificatePreviews = async () => {
@@ -37,7 +39,7 @@ export function GalleryTab({
               id: i,
               name: metadata.name || `ALPHA DAO Certificate #${i}`,
               image: metadata.image,
-              description: metadata.description
+              description: metadata.description,
             });
           } else {
             break; // Stop if we can't find consecutive certificates
@@ -55,61 +57,85 @@ export function GalleryTab({
   }, []);
 
   return (
-    <div className={`${isTransitioning ? (previousTab === 'home' ? 'slide-in-right' : previousTab === 'admin' ? 'slide-in-left' : 'fade-in') : 'fade-in'}`}>
+    <div
+      className={`${isTransitioning ? (previousTab === "home" ? "slide-in-right" : previousTab === "admin" ? "slide-in-left" : "fade-in") : "fade-in"}`}
+    >
       <div className="mb-6">
-        <h2 className={`text-xl font-bold mb-2 transition-colors duration-300 ${
-          isDarkMode ? "text-white" : "text-[#14171a]"
-        }`}>
+        <h2
+          className={`text-xl font-bold mb-2 transition-colors duration-300 ${
+            isDarkMode ? "text-white" : "text-[#14171a]"
+          }`}
+        >
           Certificate Gallery
         </h2>
-        <p className={`text-sm transition-colors duration-300 ${
-          isDarkMode ? "text-[#8899a6]" : "text-[#536471]"
-        }`}>
-          Browse all issued certificates and explore our community's achievements
+        <p
+          className={`text-sm transition-colors duration-300 ${
+            isDarkMode ? "text-[#8899a6]" : "text-[#536471]"
+          }`}
+        >
+          Browse all issued certificates and explore our community's
+          achievements
         </p>
       </div>
 
       {/* Certificate Previews */}
       {certificatePreviews.length > 0 && (
         <div className="mb-8">
-          <div className={`p-4 rounded-xl border transition-all duration-300 ${
-            isDarkMode ? "bg-[#192734] border-[#2f3336]" : "bg-white border-[#e1e8ed]"
-          }`}>
-            <h3 className={`text-lg font-bold mb-4 transition-colors duration-300 flex items-center gap-2 ${
-              isDarkMode ? "text-white" : "text-[#14171a]"
-            }`}>
+          <div
+            className={`p-4 rounded-xl border transition-all duration-300 ${
+              isDarkMode
+                ? "bg-[#192734] border-[#2f3336]"
+                : "bg-white border-[#e1e8ed]"
+            }`}
+          >
+            <h3
+              className={`text-lg font-bold mb-4 transition-colors duration-300 flex items-center gap-2 ${
+                isDarkMode ? "text-white" : "text-[#14171a]"
+              }`}
+            >
               <ImageIcon className="w-5 h-5" />
               Certificate Collection
             </h3>
             <div className="grid  gap-4">
               {certificatePreviews.map((cert) => (
-                <div key={cert.id} className={`p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
-                  isDarkMode ? "bg-[#22303c] border-[#2f3336]" : "bg-[#f7f9fa] border-[#e1e8ed]"
-                }`}>
+                <div
+                  key={cert.id}
+                  className={`p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
+                    isDarkMode
+                      ? "bg-[#22303c] border-[#2f3336]"
+                      : "bg-[#f7f9fa] border-[#e1e8ed]"
+                  }`}
+                >
                   <div className="aspect-square rounded-lg overflow-hidden mb-3">
                     <img
                       src={cert.image}
                       alt={cert.name}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = '/placeholder-nft.png';
+                        e.currentTarget.src = "/placeholder-nft.png";
                       }}
                     />
                   </div>
-                  <h4 className={`font-semibold text-sm mb-1 transition-colors duration-300 ${
-                    isDarkMode ? "text-white" : "text-[#14171a]"
-                  }`}>
+                  <h4
+                    className={`font-semibold text-sm mb-1 transition-colors duration-300 ${
+                      isDarkMode ? "text-white" : "text-[#14171a]"
+                    }`}
+                  >
                     {cert.name}
                   </h4>
-                  <p className={`text-xs transition-colors duration-300 ${
-                    isDarkMode ? "text-[#8899a6]" : "text-[#536471]"
-                  }`}>
+                  <p
+                    className={`text-xs transition-colors duration-300 ${
+                      isDarkMode ? "text-[#8899a6]" : "text-[#536471]"
+                    }`}
+                  >
                     ID: #{cert.id}
                   </p>
                   {cert.description && (
-                    <p className={`text-xs mt-2 transition-colors duration-300 ${
-                      isDarkMode ? "text-[#8899a6]" : "text-[#536471]"
-                    }`}>
+                    <p
+                      className={`text-xs mt-2 transition-colors duration-300 ${
+                        isDarkMode ? "text-[#8899a6]" : "text-[#536471]"
+                      }`}
+                    >
                       {cert.description}
                     </p>
                   )}

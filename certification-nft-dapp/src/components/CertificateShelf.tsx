@@ -1,10 +1,10 @@
-import { Award, ExternalLink, Search, Filter, Calendar, User } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { Award, Calendar, Search, User } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import { useContractState } from "@/hooks/useContractState";
 import { useMetadata } from "@/hooks/useMetadata";
 import { parseTokenId } from "@/lib/format";
 import type { NFTMetadata, Token } from "@/types";
-import { useContractState } from "@/hooks/useContractState";
-import Image from "next/image";
 
 export const CertificateShelf = () => {
   const { state: contractState } = useContractState();
@@ -17,7 +17,7 @@ export const CertificateShelf = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"date" | "id" | "name">("date");
-  const [showFilters, setShowFilters] = useState(false);
+  const [_showFilters, _setShowFilters] = useState(false);
 
   useEffect(() => {
     const loadCertificates = async () => {
@@ -52,15 +52,17 @@ export const CertificateShelf = () => {
 
   // Filter and sort certificates
   const filteredCertificates = useMemo(() => {
-    let filtered = certificates.filter(cert => {
+    const filtered = certificates.filter((cert) => {
       const matchesSearch =
         cert.metadata.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         cert.tokenId.toString().includes(searchTerm) ||
         cert.token.student.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesCategory = selectedCategory === "all" ||
-        cert.metadata.attributes?.some(attr =>
-          attr.trait_type === "Category" && attr.value === selectedCategory
+      const matchesCategory =
+        selectedCategory === "all" ||
+        cert.metadata.attributes?.some(
+          (attr) =>
+            attr.trait_type === "Category" && attr.value === selectedCategory,
         );
 
       return matchesSearch && matchesCategory;
@@ -86,8 +88,8 @@ export const CertificateShelf = () => {
   // Get unique categories
   const categories = useMemo(() => {
     const cats = new Set<string>();
-    certificates.forEach(cert => {
-      cert.metadata.attributes?.forEach(attr => {
+    certificates.forEach((cert) => {
+      cert.metadata.attributes?.forEach((attr) => {
         if (attr.trait_type === "Category") {
           cats.add(attr.value);
         }
@@ -97,7 +99,15 @@ export const CertificateShelf = () => {
   }, [certificates]);
 
   // Certificate Card Component
-  const CertificateCard = ({ metadata, tokenId, token }: { metadata: NFTMetadata; tokenId: bigint; token: Token }) => {
+  const CertificateCard = ({
+    metadata,
+    tokenId,
+    token,
+  }: {
+    metadata: NFTMetadata;
+    tokenId: bigint;
+    token: Token;
+  }) => {
     const [showDetails, setShowDetails] = useState(false);
 
     return (
@@ -161,7 +171,9 @@ export const CertificateShelf = () => {
             <div className="bg-gray-800 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold text-white">{metadata.name}</h3>
+                  <h3 className="text-xl font-bold text-white">
+                    {metadata.name}
+                  </h3>
                   <button
                     onClick={() => setShowDetails(false)}
                     className="text-gray-400 hover:text-white"
@@ -184,24 +196,36 @@ export const CertificateShelf = () => {
 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-300 mb-1">Description</h4>
-                    <p className="text-gray-400 text-sm">{metadata.description}</p>
+                    <h4 className="text-sm font-semibold text-gray-300 mb-1">
+                      Description
+                    </h4>
+                    <p className="text-gray-400 text-sm">
+                      {metadata.description}
+                    </p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-300 mb-2">Details</h4>
+                    <h4 className="text-sm font-semibold text-gray-300 mb-2">
+                      Details
+                    </h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="text-gray-500">Certificate ID:</span>
-                        <p className="text-white font-mono">{tokenId.toString()}</p>
+                        <p className="text-white font-mono">
+                          {tokenId.toString()}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Owner:</span>
-                        <p className="text-white font-mono text-xs">{token.student}</p>
+                        <p className="text-white font-mono text-xs">
+                          {token.student}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Issue Date:</span>
-                        <p className="text-white">{new Date().toLocaleDateString()}</p>
+                        <p className="text-white">
+                          {new Date().toLocaleDateString()}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Blockchain:</span>
@@ -212,12 +236,21 @@ export const CertificateShelf = () => {
 
                   {metadata.attributes && metadata.attributes.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-300 mb-2">Attributes</h4>
+                      <h4 className="text-sm font-semibold text-gray-300 mb-2">
+                        Attributes
+                      </h4>
                       <div className="grid grid-cols-2 gap-2">
                         {metadata.attributes.map((attr, index) => (
-                          <div key={index} className="bg-gray-700 rounded-lg p-3">
-                            <p className="text-xs text-gray-500">{attr.trait_type}</p>
-                            <p className="text-white font-medium">{attr.value}</p>
+                          <div
+                            key={index}
+                            className="bg-gray-700 rounded-lg p-3"
+                          >
+                            <p className="text-xs text-gray-500">
+                              {attr.trait_type}
+                            </p>
+                            <p className="text-white font-medium">
+                              {attr.value}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -258,7 +291,10 @@ export const CertificateShelf = () => {
       <div className="space-y-6">
         <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={`loading-${i}`} className="h-80 bg-gray-800 rounded-xl"></div>
+            <div
+              key={`loading-${i}`}
+              className="h-80 bg-gray-800 rounded-xl"
+            ></div>
           ))}
         </div>
       </div>
@@ -295,14 +331,18 @@ export const CertificateShelf = () => {
             className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="all">All Categories</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
           </select>
 
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as "date" | "id" | "name")}
+            onChange={(e) =>
+              setSortBy(e.target.value as "date" | "id" | "name")
+            }
             className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="date">Sort by Date</option>
@@ -314,14 +354,17 @@ export const CertificateShelf = () => {
 
       {/* Results Count */}
       <div className="text-gray-400 text-sm">
-        Showing {filteredCertificates.length} of {certificates.length} certificates
+        Showing {filteredCertificates.length} of {certificates.length}{" "}
+        certificates
       </div>
 
       {/* Certificate Grid */}
       {filteredCertificates.length === 0 ? (
         <div className="text-center py-12">
           <Award className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400 text-lg">No certificates found matching your criteria</p>
+          <p className="text-gray-400 text-lg">
+            No certificates found matching your criteria
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

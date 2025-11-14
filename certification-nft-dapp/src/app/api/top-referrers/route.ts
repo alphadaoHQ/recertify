@@ -10,6 +10,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: true, data });
   } catch (err) {
     console.error("/api/top-referrers error:", err);
-    return NextResponse.json({ success: false, message: "Failed to fetch top referrers" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Failed to fetch top referrers" },
+      { status: 500 },
+    );
   }
 }

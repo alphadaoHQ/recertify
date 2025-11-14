@@ -1,15 +1,16 @@
 "use client";
 import { useTonAddress } from "@tonconnect/ui-react";
-import { useState, useEffect, useRef } from "react";
-import { useContractState } from "@/hooks/useContractState";
-import { Header } from "@/components/Header";
-import { WelcomeModal } from "@/components/WelcomeModal";
-import { HomeTab } from "@/components/HomeTab";
-import { GalleryTab } from "@/components/GalleryTab";
-import { TasksTab } from "@/components/TasksTabRealtime";
-import { AdminTab } from "@/components/AdminTab";
-import { TabBar } from "@/components/TabBar";
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
+import { AdminTab } from "@/components/AdminTab";
+import { GalleryTab } from "@/components/GalleryTab";
+import { Header } from "@/components/Header";
+import { HomeTab } from "@/components/HomeTab";
+import { TabBar } from "@/components/TabBar";
+import { TasksTab } from "@/components/TasksTabRealtime";
+import { WelcomeModal } from "@/components/WelcomeModal";
+import { useContractState } from "@/hooks/useContractState";
+
 const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
   ssr: false,
   loading: () => <div className="p-4">Loading rewards...</div>,
@@ -18,7 +19,7 @@ const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
 export default function Home() {
   const userAddress = useTonAddress();
   const { isOwner, isAdmin, refetch } = useContractState();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [_successMessage, setSuccessMessage] = useState<string | null>(null);
   const [courseProgress, setCourseProgress] = useState({
     blockchain: false,
     ton: false,
@@ -27,7 +28,7 @@ export default function Home() {
   const [showAlphaNotification, setShowAlphaNotification] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState("home");
   const [previousTab, setPreviousTab] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -37,15 +38,15 @@ export default function Home() {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
 
-  // Default to dark mode if no theme is saved
-  if (!savedTheme || savedTheme === "dark") {
-    setIsDarkMode(true);
-    document.documentElement.classList.add("dark");
-    localStorage.setItem("theme", "dark");
-  } else {
-    setIsDarkMode(false);
-    document.documentElement.classList.remove("dark");
-  }
+    // Default to dark mode if no theme is saved
+    if (!savedTheme || savedTheme === "dark") {
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -63,7 +64,7 @@ export default function Home() {
 
   const completedCourses = Object.values(courseProgress).filter(Boolean).length;
   const totalCourses = Object.keys(courseProgress).length;
-  const progressPercentage = (completedCourses / totalCourses) * 100;
+  const _progressPercentage = (completedCourses / totalCourses) * 100;
 
   const handleTransactionSuccess = (message: string) => {
     setSuccessMessage(message);
@@ -71,7 +72,7 @@ export default function Home() {
     setTimeout(refetch, 3000);
   };
 
-  const handleDisconnect = () => {
+  const _handleDisconnect = () => {
     if (typeof window === "undefined") return;
     try {
       Object.keys(localStorage).forEach((key) => {
@@ -115,7 +116,7 @@ export default function Home() {
   };
 
   // Auto-go after some seconds, allow cancel or immediate "Go"
-  const handleCloseAlphaNotification = () => {
+  const _handleCloseAlphaNotification = () => {
     if (autoGoTimer.current) {
       clearTimeout(autoGoTimer.current);
       autoGoTimer.current = null;
@@ -147,14 +148,12 @@ export default function Home() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAlphaNotification]);
+  }, [showAlphaNotification, handleGoAlpha]);
 
   return (
     <div
       className={`min-h-screen antialiased transition-colors duration-300 ${
-        isDarkMode
-          ? "bg-[#15202b] text-white"
-          : "bg-white text-[#14171a]"
+        isDarkMode ? "bg-[#15202b] text-white" : "bg-white text-[#14171a]"
       } max-w-md mx-auto relative overflow-y-auto`}
     >
       <WelcomeModal
@@ -168,7 +167,7 @@ export default function Home() {
       <main className="flex-1 px-4 py-4 pb-24 overflow-y-auto">
         {/* Tab Content */}
         <div className="telegram-tab-content min-h-[calc(100vh-140px)]">
-          {activeTab === 'home' && (
+          {activeTab === "home" && (
             <HomeTab
               isDarkMode={isDarkMode}
               isTransitioning={isTransitioning}
@@ -179,7 +178,7 @@ export default function Home() {
             />
           )}
 
-          {activeTab === 'tasks' && (
+          {activeTab === "tasks" && (
             <TasksTab
               isDarkMode={isDarkMode}
               isTransitioning={isTransitioning}
@@ -188,7 +187,7 @@ export default function Home() {
             />
           )}
 
-          {activeTab === 'gallery' && (
+          {activeTab === "gallery" && (
             <GalleryTab
               isDarkMode={isDarkMode}
               isTransitioning={isTransitioning}
@@ -196,11 +195,9 @@ export default function Home() {
             />
           )}
 
-          {activeTab === 'rewards' && (
-            <RewardsTab userAddress={userAddress} />
-          )}
+          {activeTab === "rewards" && <RewardsTab userAddress={userAddress} />}
 
-          {activeTab === 'admin' && (
+          {activeTab === "admin" && (
             <AdminTab
               isDarkMode={isDarkMode}
               isTransitioning={isTransitioning}

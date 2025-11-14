@@ -1,6 +1,6 @@
 import { Award, ExternalLink, Loader2, Search } from "lucide-react";
-import { type FormEvent, useState } from "react";
 import Image from "next/image";
+import { type FormEvent, useState } from "react";
 import { useMetadata } from "@/hooks/useMetadata";
 import { parseTokenId } from "@/lib/format";
 import type { NFTMetadata, Token } from "@/types";

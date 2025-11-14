@@ -37,7 +37,10 @@ export function generateShareText(referralLink: string): string {
 /**
  * Open external link with fallback to clipboard
  */
-export async function shareOrCopyLink(link: string, text: string): Promise<void> {
+export async function shareOrCopyLink(
+  link: string,
+  text: string,
+): Promise<void> {
   try {
     // Try native Web Share API first
     if (navigator.share) {

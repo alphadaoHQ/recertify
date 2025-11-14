@@ -1,9 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  verifyReferral,
-  verifyCertificateViews,
-  VerifyTaskResult,
-} from "@/lib/taskVerification";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { verifyCertificateViews, verifyReferral } from "@/lib/taskVerification";
 
 // Mock Supabase
 vi.mock("@/lib/supabaseClient", () => ({
@@ -43,7 +39,9 @@ describe("taskVerification", () => {
     });
 
     it("should return success when referred user has completed tasks", async () => {
-      const mockSupabase = await import("@/lib/supabaseClient").then((m) => m.default);
+      const mockSupabase = await import("@/lib/supabaseClient").then(
+        (m) => m.default,
+      );
       vi.mocked(mockSupabase.from).mockReturnValueOnce({
         select: () => ({
           eq: () => ({
@@ -60,7 +58,9 @@ describe("taskVerification", () => {
     });
 
     it("should return failure when referred user not found", async () => {
-      const mockSupabase = await import("@/lib/supabaseClient").then((m) => m.default);
+      const mockSupabase = await import("@/lib/supabaseClient").then(
+        (m) => m.default,
+      );
       vi.mocked(mockSupabase.from).mockReturnValueOnce({
         select: () => ({
           eq: () => ({
@@ -78,7 +78,9 @@ describe("taskVerification", () => {
     });
 
     it("should return failure when referred user has not completed any tasks", async () => {
-      const mockSupabase = await import("@/lib/supabaseClient").then((m) => m.default);
+      const mockSupabase = await import("@/lib/supabaseClient").then(
+        (m) => m.default,
+      );
       vi.mocked(mockSupabase.from).mockReturnValueOnce({
         select: () => ({
           eq: () => ({

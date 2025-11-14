@@ -1,15 +1,14 @@
 import {
-  Search,
-  Loader2,
   AlertCircle,
   CheckCircle,
   ExternalLink,
   FileText,
+  Loader2,
+  Search,
 } from "lucide-react";
 import { useState } from "react";
-import { useNFTScanner, type ScannedNFT } from "@/hooks/useNFTScanner";
+import { type ScannedNFT, useNFTScanner } from "@/hooks/useNFTScanner";
 import { IPFSCollectionViewer } from "./IPFSCollectionViewer";
-import type { NFTMetadata } from "@/types";
 
 const NFTCard = ({ nft }: { nft: ScannedNFT }) => {
   const [imageError, setImageError] = useState(false);
@@ -111,7 +110,7 @@ export const NFTScanner = () => {
       await scanAllNFTs();
       setShowResults(true);
       setShowIPFSCollection(true);
-    } catch (err) {
+    } catch (_err) {
       // Error is handled by the hook
     }
   };

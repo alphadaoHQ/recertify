@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
+import { useCallback, useState } from "react";
 import { contractService } from "@/lib/contract/contractService";
 import type { TransactionResult } from "@/types";
 

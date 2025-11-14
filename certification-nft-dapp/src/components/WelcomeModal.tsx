@@ -48,7 +48,8 @@ export function WelcomeModal({
           >
             Join ALPHA DAO - the premier Web3 education platform empowering the
             next billion users. Complete the learning journey and earn exclusive
-            NFT certificates that showcase your Web3 expertise on the TON network.
+            NFT certificates that showcase your Web3 expertise on the TON
+            network.
           </p>
         </div>
 
@@ -57,7 +58,9 @@ export function WelcomeModal({
           className="w-full relative bg-gradient-to-r from-purple-700 to-purple-950 hover:from-purple-950 hover:to-purple-700 text-white font-semibold py-4 rounded-2xl transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.97] shadow-[0_0_28px_rgba(139,92,246,0.55)] hover:shadow-[0_0_40px_rgba(139,92,246,0.85)] overflow-hidden group text-lg"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-          <span className="relative font-semibold tracking-wide">Start Learning</span>
+          <span className="relative font-semibold tracking-wide">
+            Start Learning
+          </span>
         </button>
       </div>
     </div>

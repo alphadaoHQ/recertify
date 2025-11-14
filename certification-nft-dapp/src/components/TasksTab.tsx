@@ -1,16 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import {
-  CheckCircle2,
-  Circle,
-  Zap,
-  CheckSquare,
-  Users,
-  MessageCircle,
-  Play,
-  Gift,
-  Sparkles,
-} from "lucide-react";
+import { CheckCircle2, Circle, Sparkles, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Category = "All" | "Social" | "Engagement" | "Learning" | "Referral";
 type Frequency = "Daily" | "Weekly" | "Special";
@@ -117,11 +107,13 @@ export function TasksTab({
   ]);
 
   const [totalPoints, setTotalPoints] = useState<number>(0);
-  const [dailyStreak, setDailyStreak] = useState<number>(3); // example
+  const [dailyStreak, _setDailyStreak] = useState<number>(3); // example
 
   useEffect(() => {
     // compute total claimed points
-    const claimed = tasks.filter((t) => t.claimed).reduce((s, t) => s + t.reward, 0);
+    const claimed = tasks
+      .filter((t) => t.claimed)
+      .reduce((s, t) => s + t.reward, 0);
     setTotalPoints(claimed);
   }, [tasks]);
 
@@ -152,34 +144,48 @@ export function TasksTab({
   function claimTask(id: string) {
     setTasks((prev) =>
       prev.map((t) =>
-        t.id === id && t.completed && !t.claimed
-          ? { ...t, claimed: true }
-          : t,
+        t.id === id && t.completed && !t.claimed ? { ...t, claimed: true } : t,
       ),
     );
   }
 
   function renderBadge(frequency: Frequency) {
     const base = "inline-block text-xs px-2 py-0.5 rounded-full font-semibold";
-    if (frequency === "Daily") return <span className={`${base} bg-green-100 text-green-700`}>Daily</span>;
-    if (frequency === "Weekly") return <span className={`${base} bg-blue-100 text-blue-700`}>Weekly</span>;
-    return <span className={`${base} bg-purple-100 text-purple-700`}>Special</span>;
+    if (frequency === "Daily")
+      return (
+        <span className={`${base} bg-green-100 text-green-700`}>Daily</span>
+      );
+    if (frequency === "Weekly")
+      return (
+        <span className={`${base} bg-blue-100 text-blue-700`}>Weekly</span>
+      );
+    return (
+      <span className={`${base} bg-purple-100 text-purple-700`}>Special</span>
+    );
   }
 
   return (
     <div
       className={`transition-all duration-300 ${
-        isTransitioning && previousTab === "tasks" ? "opacity-50" : "opacity-100"
+        isTransitioning && previousTab === "tasks"
+          ? "opacity-50"
+          : "opacity-100"
       }`}
     >
       {/* Stats Dashboard */}
       <div className="rounded-2xl p-4 mb-4 border bg-gradient-to-br from-white/30 to-white/10">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-[#14171a]"}`}>
+            <h3
+              className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-[#14171a]"}`}
+            >
               Stats
             </h3>
-            <p className={`text-xs ${isDarkMode ? "text-[#8899a6]" : "text-[#536471]"}`}>Overview of your progress</p>
+            <p
+              className={`text-xs ${isDarkMode ? "text-[#8899a6]" : "text-[#536471]"}`}
+            >
+              Overview of your progress
+            </p>
           </div>
           <div className="text-right">
             <p className="text-sm text-[#8899a6]">Level</p>
@@ -214,12 +220,22 @@ export function TasksTab({
           <div className="p-3 rounded-lg border bg-opacity-40">
             <p className="text-xs text-[#8899a6]">Categories</p>
             <div className="flex gap-2 mt-1">
-              {(["All", "Social", "Engagement", "Learning", "Referral"] as Category[]).map((c) => (
+              {(
+                [
+                  "All",
+                  "Social",
+                  "Engagement",
+                  "Learning",
+                  "Referral",
+                ] as Category[]
+              ).map((c) => (
                 <button
                   key={c}
                   onClick={() => setCategoryFilter(c)}
                   className={`text-xs px-2 py-1 rounded-full border ${
-                    categoryFilter === c ? "bg-[#1da1f2] text-white border-transparent" : "bg-transparent text-[#536471]"
+                    categoryFilter === c
+                      ? "bg-[#1da1f2] text-white border-transparent"
+                      : "bg-transparent text-[#536471]"
                   }`}
                 >
                   {c}
@@ -233,29 +249,47 @@ export function TasksTab({
       {/* Tasks list */}
       <div className="space-y-3">
         {filteredTasks.map((task) => (
-          <div key={task.id} className={`p-4 rounded-xl transition-all duration-200 border ${task.completed ? "border-[#1da1f2]/40 bg-[#1da1f2]/8" : isDarkMode ? "bg-[#192734] border-[#2f3336]" : "bg-white border-[#e6edf2]"}`}>
+          <div
+            key={task.id}
+            className={`p-4 rounded-xl transition-all duration-200 border ${task.completed ? "border-[#1da1f2]/40 bg-[#1da1f2]/8" : isDarkMode ? "bg-[#192734] border-[#2f3336]" : "bg-white border-[#e6edf2]"}`}
+          >
             <div className="flex items-start gap-3">
               <div className="pt-1 flex-shrink-0">
                 {task.completed ? (
                   <CheckCircle2 className="w-6 h-6 text-[#1da1f2]" />
                 ) : (
-                  <Circle className={`w-6 h-6 ${isDarkMode ? "text-[#536471]" : "text-[#bcc7cf]"}`} />
+                  <Circle
+                    className={`w-6 h-6 ${isDarkMode ? "text-[#536471]" : "text-[#bcc7cf]"}`}
+                  />
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <h4 className={`font-semibold text-sm ${task.completed ? "text-[#1da1f2] line-through" : isDarkMode ? "text-white" : "text-[#14171a]"}`}>{task.title}</h4>
+                  <h4
+                    className={`font-semibold text-sm ${task.completed ? "text-[#1da1f2] line-through" : isDarkMode ? "text-white" : "text-[#14171a]"}`}
+                  >
+                    {task.title}
+                  </h4>
                   <div className="flex items-center gap-2">
                     {renderBadge(task.frequency)}
                   </div>
                 </div>
-                <p className={`text-xs mt-1 ${isDarkMode ? "text-[#8899a6]" : "text-[#536471]"}`}>{task.description}</p>
+                <p
+                  className={`text-xs mt-1 ${isDarkMode ? "text-[#8899a6]" : "text-[#536471]"}`}
+                >
+                  {task.description}
+                </p>
 
                 {/* Progress bar (if needed) */}
                 <div className="mt-3">
-                  <div className={`${isDarkMode ? "bg-[#2f3336]" : "bg-[#e6edf2]"} h-2 rounded-full overflow-hidden`}> 
-                    <div className="h-full bg-gradient-to-r from-[#1da1f2] to-[#6366f1] transition-all" style={{ width: `${task.progress}%` }} />
+                  <div
+                    className={`${isDarkMode ? "bg-[#2f3336]" : "bg-[#e6edf2]"} h-2 rounded-full overflow-hidden`}
+                  >
+                    <div
+                      className="h-full bg-gradient-to-r from-[#1da1f2] to-[#6366f1] transition-all"
+                      style={{ width: `${task.progress}%` }}
+                    />
                   </div>
                 </div>
               </div>
@@ -263,7 +297,11 @@ export function TasksTab({
               <div className="flex-shrink-0 text-right pt-1 flex flex-col items-end gap-2">
                 <div className="flex items-center gap-1 justify-end">
                   <Zap className="w-4 h-4 text-yellow-400" />
-                  <span className={`font-bold text-sm ${task.completed ? "text-[#1da1f2]" : "text-yellow-400"}`}>+{task.reward}</span>
+                  <span
+                    className={`font-bold text-sm ${task.completed ? "text-[#1da1f2]" : "text-yellow-400"}`}
+                  >
+                    +{task.reward}
+                  </span>
                 </div>
 
                 {/* Action button */}
@@ -286,7 +324,12 @@ export function TasksTab({
                 )}
 
                 {task.claimed && (
-                  <button disabled className="mt-2 px-3 py-1 text-xs rounded-md font-semibold bg-gray-200 text-gray-500">Claimed</button>
+                  <button
+                    disabled
+                    className="mt-2 px-3 py-1 text-xs rounded-md font-semibold bg-gray-200 text-gray-500"
+                  >
+                    Claimed
+                  </button>
                 )}
               </div>
             </div>
@@ -296,8 +339,14 @@ export function TasksTab({
 
       {/* Completed Message */}
       {completedCount === tasks.length && (
-        <div className={`mt-6 p-4 rounded-xl text-center border-2 ${isDarkMode ? "bg-[#1da1f2]/10 border-[#1da1f2]/50" : "bg-[#1da1f2]/5 border-[#1da1f2]/30"}`}>
-          <p className={`font-semibold ${isDarkMode ? "text-[#1da1f2]" : "text-[#1da1f2]"}`}>🎉 All tasks completed! Keep checking back for new challenges.</p>
+        <div
+          className={`mt-6 p-4 rounded-xl text-center border-2 ${isDarkMode ? "bg-[#1da1f2]/10 border-[#1da1f2]/50" : "bg-[#1da1f2]/5 border-[#1da1f2]/30"}`}
+        >
+          <p
+            className={`font-semibold ${isDarkMode ? "text-[#1da1f2]" : "text-[#1da1f2]"}`}
+          >
+            🎉 All tasks completed! Keep checking back for new challenges.
+          </p>
         </div>
       )}
     </div>

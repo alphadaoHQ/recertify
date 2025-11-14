@@ -4,7 +4,10 @@
  */
 
 import supabase from "@/lib/supabaseClient";
-import { incrementReferralCount, awardAchievement } from "@/lib/supabaseService";
+import {
+  awardAchievement,
+  incrementReferralCount,
+} from "@/lib/supabaseService";
 
 export interface VerifyTaskResult {
   success: boolean;
@@ -15,7 +18,9 @@ export interface VerifyTaskResult {
  * Verify if user follows Twitter account
  * Note: This requires Twitter API integration (not implemented here)
  */
-export async function verifyTwitterFollow(userHandle: string): Promise<VerifyTaskResult> {
+export async function verifyTwitterFollow(
+  _userHandle: string,
+): Promise<VerifyTaskResult> {
   // TODO: Integrate with Twitter API to verify follow
   // For now, return mock success
   return {
@@ -28,7 +33,9 @@ export async function verifyTwitterFollow(userHandle: string): Promise<VerifyTas
  * Verify if user joined Telegram group
  * Note: This requires Telegram Bot API integration (not implemented here)
  */
-export async function verifyTelegramJoin(userTelegramId: string): Promise<VerifyTaskResult> {
+export async function verifyTelegramJoin(
+  _userTelegramId: string,
+): Promise<VerifyTaskResult> {
   // TODO: Integrate with Telegram Bot API to verify membership
   // For now, return mock success
   return {
@@ -40,7 +47,10 @@ export async function verifyTelegramJoin(userTelegramId: string): Promise<Verify
 /**
  * Verify referral: check if referred user exists and has completed at least one task
  */
-export async function verifyReferral(referrerAddress: string, referredAddress: string): Promise<VerifyTaskResult> {
+export async function verifyReferral(
+  referrerAddress: string,
+  referredAddress: string,
+): Promise<VerifyTaskResult> {
   try {
     // Check if referred user exists in user_stats
     const { data, error } = await supabase
@@ -54,7 +64,10 @@ export async function verifyReferral(referrerAddress: string, referredAddress: s
     }
 
     // Check if referred user has completed at least one task
-    if (Array.isArray(data.claimed_task_ids) && data.claimed_task_ids.length > 0) {
+    if (
+      Array.isArray(data.claimed_task_ids) &&
+      data.claimed_task_ids.length > 0
+    ) {
       // Increment referrer's count and award simple achievement
       try {
         await incrementReferralCount(referrerAddress);
@@ -65,8 +78,11 @@ export async function verifyReferral(referrerAddress: string, referredAddress: s
       return { success: true, message: "Referral verified" };
     }
 
-    return { success: false, message: "Referred user has not completed any tasks yet" };
-  } catch (err) {
+    return {
+      success: false,
+      message: "Referred user has not completed any tasks yet",
+    };
+  } catch (_err) {
     return { success: false, message: "Referral verification failed" };
   }
 }
@@ -75,7 +91,9 @@ export async function verifyReferral(referrerAddress: string, referredAddress: s
  * Verify NFT mint: check if user has minted at least one NFT on chain
  * Note: Requires TON blockchain integration
  */
-export async function verifyNFTMint(userAddress: string): Promise<VerifyTaskResult> {
+export async function verifyNFTMint(
+  _userAddress: string,
+): Promise<VerifyTaskResult> {
   // TODO: Integrate with TON blockchain to check NFT mints
   // For now, return mock success
   return {
@@ -88,19 +106,25 @@ export async function verifyNFTMint(userAddress: string): Promise<VerifyTaskResu
  * Verify certificate view: check if user has viewed at least 5 certificates
  * This would be tracked locally but could be verified against a view log
  */
-export async function verifyCertificateViews(userAddress: string, viewCount: number = 5): Promise<VerifyTaskResult> {
+export async function verifyCertificateViews(
+  _userAddress: string,
+  viewCount: number = 5,
+): Promise<VerifyTaskResult> {
   if (viewCount >= 5) {
     return { success: true, message: "Certificate views verified" };
   }
-  return { success: false, message: `User has only viewed ${viewCount}/5 certificates` };
+  return {
+    success: false,
+    message: `User has only viewed ${viewCount}/5 certificates`,
+  };
 }
 
 /**
  * Mark a task as verified and lock it (prevent unclaiming)
  */
 export async function verifyAndLockTask(
-  userAddress: string,
-  taskId: string,
+  _userAddress: string,
+  _taskId: string,
   verificationFn: () => Promise<VerifyTaskResult>,
 ): Promise<VerifyTaskResult> {
   try {
@@ -113,7 +137,7 @@ export async function verifyAndLockTask(
     }
 
     return result;
-  } catch (err) {
+  } catch (_err) {
     return { success: false, message: "Verification failed" };
   }
 }

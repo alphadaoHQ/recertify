@@ -226,7 +226,8 @@ body {
 .telegram-mini-app {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .telegram-tab-content {
@@ -280,7 +281,8 @@ body {
 
 /* Enhanced tab animations */
 @keyframes tabPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -291,7 +293,8 @@ body {
 }
 
 @keyframes tabGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
   }
   50% {
@@ -300,7 +303,9 @@ body {
 }
 
 .tab-active {
-  animation: tabPulse 2s infinite, tabGlow 2s infinite;
+  animation:
+    tabPulse 2s infinite,
+    tabGlow 2s infinite;
 }
 
 .tab-hover {

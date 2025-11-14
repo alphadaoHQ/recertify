@@ -1,11 +1,13 @@
 import { RefreshCw } from "lucide-react";
 import { useContractState } from "@/hooks/useContractState";
+import { MAX_SUPPLY } from "@/lib/constants";
 import { formatSupply, formatTokenId } from "@/lib/format";
 import { formatAddress } from "@/lib/utils/address";
-import { MAX_SUPPLY } from "@/lib/constants";
 
 export const ContractState = () => {
   const { state, loading, error, refetch } = useContractState();
+
+  console.log("[ContractState] Component render:", { state, loading, error });
 
   if (error) {
     return (

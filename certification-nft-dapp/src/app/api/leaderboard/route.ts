@@ -10,6 +10,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: true, data });
   } catch (err) {
     console.error("/api/leaderboard error:", err);
-    return NextResponse.json({ success: false, message: "Failed to fetch leaderboard" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Failed to fetch leaderboard" },
+      { status: 500 },
+    );
   }
 }
