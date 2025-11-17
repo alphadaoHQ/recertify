@@ -93,6 +93,38 @@ export const ContractState = () => {
               {formatAddress(state.owner, false)}
             </p>
           </div>
+
+          {/* Tokens List */}
+          {state.tokens && state.tokens.length > 0 && (
+            <div className="md:col-span-2 bg-green-50 p-4 rounded-lg border border-green-200">
+              <p className="text-sm text-green-700 font-medium mb-3">
+                Minted Tokens ({state.tokens.length})
+              </p>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {state.tokens.map((token) => (
+                  <div
+                    key={token.id.toString()}
+                    className="bg-white p-3 rounded border border-green-100 flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        Token #{formatTokenId(token.id)}
+                      </p>
+                      <p className="text-xs text-gray-600 font-mono">
+                        Student: {formatAddress(token.student, true)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Metadata</p>
+                      <p className="text-xs font-mono text-gray-700 truncate max-w-32">
+                        {token.metadata.slice(0, 20)}...
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

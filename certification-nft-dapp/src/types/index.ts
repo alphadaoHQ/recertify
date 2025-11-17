@@ -3,6 +3,7 @@ export interface ContractState {
   total: bigint;
   nextId: bigint;
   base_uri: string;
+  tokens?: Token[];
 }
 
 export interface Token {

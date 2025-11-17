@@ -21,7 +21,18 @@ export const useContractState = () => {
       console.log("[useContractState] Calling contractService.getState()");
       const contractState = await contractService.getState();
       console.log("[useContractState] contractState received:", contractState);
-      setState(contractState);
+
+      // Fetch all tokens
+      console.log("[useContractState] Fetching all tokens");
+      const tokens = await contractService.getAllTokens();
+      console.log("[useContractState] tokens received:", tokens.length);
+
+      const fullState = {
+        ...contractState,
+        tokens,
+      };
+
+      setState(fullState);
 
       if (userAddress) {
         const owner = addressesEqual(userAddress, contractState.owner);

@@ -208,6 +208,29 @@ export class ContractService {
   }
 
   /**
+   * Get all minted tokens
+   */
+  async getAllTokens(): Promise<Token[]> {
+    try {
+      const state = await this.getState();
+      const tokens: Token[] = [];
+
+      // Iterate from ID 1 to nextId - 1 to get all minted tokens
+      for (let id = 1n; id < state.nextId; id++) {
+        const token = await this.getToken(id);
+        if (token) {
+          tokens.push(token);
+        }
+      }
+
+      return tokens;
+    } catch (error) {
+      console.error("Error fetching all tokens:", error);
+      return [];
+    }
+  }
+
+  /**
    * Build add admin transaction payload
    */
   buildAddAdminTransaction(adminAddress: string) {
