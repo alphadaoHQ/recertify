@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { RiTrophyFill, RiUser3Fill } from "react-icons/ri";
+import { RiUser3Fill } from "react-icons/ri";
 import BadgesPanel from "@/components/BadgesPanel";
+import LeaderboardTab from "./LeaderboardTab";
 
 interface RewardsTabProps {
   userAddress?: string | null;
@@ -55,36 +56,7 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
 
       <div className="grid md:grid-cols-2 gap-4">
         <div className="rounded-2xl border border-white/6 p-4 bg-gradient-to-br from-white/3 to-white/2">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <RiTrophyFill className="w-5 h-5 text-yellow-400" />
-              <h4 className="font-semibold">Top by Points</h4>
-            </div>
-            <span className="text-xs text-white/70">Top 10</span>
-          </div>
-          <ol className="space-y-2">
-            {leaders.map((u, idx) => (
-              <li
-                key={u.user_address}
-                className="flex items-center justify-between gap-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-700 to-purple-500 flex items-center justify-center text-white font-mono">
-                    {idx + 1}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium">
-                      {shortAddr(u.user_address)}
-                    </div>
-                    <div className="text-xs text-white/60">
-                      {u.user_address}
-                    </div>
-                  </div>
-                </div>
-                <div className="font-semibold">{u.points || 0} pts</div>
-              </li>
-            ))}
-          </ol>
+          <LeaderboardTab userAddress={userAddress} />
         </div>
 
         <div className="rounded-2xl border border-white/6 p-4 bg-gradient-to-br from-white/3 to-white/2">

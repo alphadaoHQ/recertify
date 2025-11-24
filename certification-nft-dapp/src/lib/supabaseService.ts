@@ -109,16 +109,62 @@ export function shouldResetCheckIn(lastCheckinDate?: string): boolean {
 /**
  * Fetch leaderboard ordered by points (descending)
  */
-export async function getLeaderboard(limit: number = 10) {
+export type LeaderboardType = "daily" | "weekly" | "alltime";
+
+export async function getLeaderboard(limit: number = 10, type: LeaderboardType = "alltime") {
   try {
+    if (type === "daily") {
+      const today = getTodayDateString();
+      const nextDay = new Date(new Date().setDate(new Date().getDate() + 1))
+        .toISOString()
+        .split("T")[0];
+
+      const { data, error } = await supabase
+        .from("user_stats")
+        .select("user_address, points, referral_count, telegram_id, created_at, avatar_url, user_name")
+        .gte("created_at", `${today}T00:00:00Z`)
+        .lt("created_at", `${nextDay}T00:00:00Z`)
+        .order("points", { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.warn("Supabase daily leaderboard error:", error);
+        return [];
+      }
+
+      return data || [];
+    }
+
+    if (type === "weekly") {
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0];
+
+      const { data, error } = await supabase
+        .from("user_stats")
+        .select("user_address, points, referral_count, telegram_id, created_at, avatar_url, user_name")
+        .gte("created_at", `${sevenDaysAgo}T00:00:00Z`)
+        .order("points", { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.warn("Supabase weekly leaderboard error:", error);
+        return [];
+      }
+
+      return data || [];
+    }
+
+    // alltime
     const { data, error } = await supabase
       .from("user_stats")
-      .select("user_address, points, referral_count")
+      .select("user_address, points, referral_count, telegram_id, created_at, avatar_url, user_name")
       .order("points", { ascending: false })
       .limit(limit);
 
     if (error) {
-      console.warn("Supabase leaderboard error:", error);
+      console.warn("Supabase alltime leaderboard error:", error);
       return [];
     }
 
@@ -216,6 +262,119 @@ export async function getUserAchievements(
     return Array.isArray(data.achievements) ? data.achievements : [];
   } catch (_e) {
     return [];
+  }
+}
+
+/**
+ * Fetch avatar audit entries for a user
+ */
+export async function getAvatarAudit(userAddress: string, limit: number = 20) {
+  try {
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("id, user_address, avatar_url, method, metadata, created_at")
+      .eq("user_address", userAddress)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.warn("Supabase avatar_audit fetch error:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (_e) {
+    return [];
+  }
+}
+
+/**
+ * Get paginated avatar audit entries for a specific user.
+ * Returns { data, total, page, pageSize }.
+ */
+export async function getAvatarAuditPaginated(
+  userAddress: string,
+  page: number = 1,
+  pageSize: number = 20,
+) {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Get total count
+    const { count, error: countError } = await supabase
+      .from("avatar_audit")
+      .select("*", { count: "exact", head: true })
+      .eq("user_address", userAddress);
+
+    if (countError) {
+      console.warn("Supabase avatar_audit count error:", countError);
+      return { data: [], total: 0, page, pageSize };
+    }
+
+    // Get paginated data
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("id, user_address, avatar_url, method, metadata, created_at")
+      .eq("user_address", userAddress)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.warn("Supabase avatar_audit fetch error:", error);
+      return { data: [], total: 0, page, pageSize };
+    }
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      pageSize,
+    };
+  } catch (_e) {
+    return { data: [], total: 0, page, pageSize };
+  }
+}
+
+/**
+ * Get all avatar audit entries (admin only). Returns paginated results.
+ */
+export async function getAllAvatarAuditsPaginated(
+  page: number = 1,
+  pageSize: number = 20,
+) {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Get total count
+    const { count, error: countError } = await supabase
+      .from("avatar_audit")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      console.warn("Supabase avatar_audit count error:", countError);
+      return { data: [], total: 0, page, pageSize };
+    }
+
+    // Get paginated data
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("id, user_address, avatar_url, method, metadata, created_at")
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.warn("Supabase avatar_audit fetch error:", error);
+      return { data: [], total: 0, page, pageSize };
+    }
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      pageSize,
+    };
+  } catch (_e) {
+    return { data: [], total: 0, page, pageSize };
   }
 }
 
