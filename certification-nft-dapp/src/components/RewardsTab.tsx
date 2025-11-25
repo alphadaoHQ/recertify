@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { RiTrophyFill, RiUser3Fill } from "react-icons/ri";
 import BadgesPanel from "@/components/BadgesPanel";
 import Leaderboard from "@/components/Leaderboard";
 

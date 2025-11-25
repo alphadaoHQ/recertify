@@ -7,6 +7,7 @@ export const EXTERNAL_LINKS = {
   // Social Media
   twitter: "https://x.com/Alpha_Daos",
   telegram: "https://t.me/AlphaDAOs",
+  telegramUsername: "AlphaDAOs", // Telegram username for referral links
 
   // Tutorial videos
   tutorialVideo: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // TODO: Replace with actual tutorial URL
@@ -16,12 +17,24 @@ export const EXTERNAL_LINKS = {
   docs: "https://docs.example.com",
   faq: "https://example.com/faq",
 
-  // Referral links (with base URL)
+  // Referral links (with base URL) - kept for backward compatibility
   referralBase: "https://certification-nft.example.com",
 } as const;
 
 /**
- * Generate a shareable referral link for a user
+ * Generate a Telegram-style referral link using a referral code
+ * Format: t.me/AlphaDAOs/{referralCode}
+ */
+export function generateTelegramReferralLink(referralCode: string): string {
+  if (!referralCode) {
+    return EXTERNAL_LINKS.telegram; // Fallback to group link if no code
+  }
+  return `https://t.me/${EXTERNAL_LINKS.telegramUsername}/${referralCode}`;
+}
+
+/**
+ * Generate a shareable referral link for a user (legacy function for backward compatibility)
+ * @deprecated Use generateTelegramReferralLink with referral code instead
  */
 export function generateReferralLink(userAddress: string): string {
   return `${EXTERNAL_LINKS.referralBase}?ref=${userAddress}`;

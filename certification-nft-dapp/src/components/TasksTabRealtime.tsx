@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useAnimateOnScroll } from "@/hooks/useAnimateOnScroll";
 import {
   EXTERNAL_LINKS,
-  generateReferralLink,
+  generateTelegramReferralLink,
   generateShareText,
   shareOrCopyLink,
 } from "@/lib/externalLinks";
@@ -16,6 +16,7 @@ import {
   loadUserStats,
   saveUserStats,
   shouldResetCheckIn,
+  getOrCreateReferralCode,
 } from "@/lib/supabaseService";
 
 const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
@@ -244,12 +245,18 @@ export function TasksTab({
       }
       case "referral":
         if (userAddress) {
-          const referralLink = generateReferralLink(userAddress);
-          const shareText = generateShareText(referralLink);
-          if (isInTelegram()) {
-            shareUrl(referralLink, shareText);
+          // Get or create referral code for the user
+          const referralCode = await getOrCreateReferralCode(userAddress);
+          if (referralCode) {
+            const referralLink = generateTelegramReferralLink(referralCode);
+            const shareText = generateShareText(referralLink);
+            if (isInTelegram()) {
+              shareUrl(referralLink, shareText);
+            } else {
+              await shareOrCopyLink(referralLink, shareText);
+            }
           } else {
-            await shareOrCopyLink(referralLink, shareText);
+            console.error("Failed to generate referral code");
           }
         }
         break;

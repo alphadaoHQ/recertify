@@ -1,4 +1,5 @@
 import supabase from "@/lib/supabaseClient";
+import { generateReferralCode } from "@/lib/referralUtils";
 
 export interface UserStats {
   user_address: string;
@@ -7,6 +8,7 @@ export interface UserStats {
   claimed_task_ids: string[];
   achievements?: string[];
   referral_count?: number;
+  referral_code?: string;
   last_checkin?: string; // ISO date
 }
 
@@ -110,12 +112,14 @@ export function shouldResetCheckIn(lastCheckinDate?: string): boolean {
 
 /**
  * Fetch leaderboard ordered by points (descending)
+ * @param limit - Maximum number of entries to return
+ * @param type - Leaderboard type: "daily" | "weekly" | "alltime" (currently all return all-time)
  */
-export async function getLeaderboard(limit: number = 10) {
+export async function getLeaderboard(limit: number = 10, type: "daily" | "weekly" | "alltime" = "alltime") {
   try {
     const { data, error } = await supabase
       .from("user_stats")
-      .select("user_address, points, referral_count")
+      .select("user_address, points, referral_count, referral_code")
       .order("points", { ascending: false })
       .limit(limit);
 
@@ -124,6 +128,9 @@ export async function getLeaderboard(limit: number = 10) {
       return [];
     }
 
+    // TODO: Implement filtering by type (daily/weekly) based on created_at or points_earned_date
+    // For now, all types return the same all-time leaderboard
+    
     return data || [];
   } catch (err) {
     console.warn("Failed to fetch leaderboard:", err);
@@ -138,7 +145,7 @@ export async function getTopReferrers(limit: number = 10) {
   try {
     const { data, error } = await supabase
       .from("user_stats")
-      .select("user_address, points, referral_count")
+      .select("user_address, points, referral_count, referral_code")
       .order("referral_count", { ascending: false })
       .limit(limit);
 
@@ -222,6 +229,78 @@ export async function getUserAchievements(
 }
 
 /**
+ * Get or generate a referral code for a user
+ * Creates one if it doesn't exist
+ */
+export async function getOrCreateReferralCode(
+  userAddress: string,
+): Promise<string | null> {
+  try {
+    // Check if user already has a referral code
+    const { data: existingData } = await supabase
+      .from("user_stats")
+      .select("referral_code")
+      .eq("user_address", userAddress)
+      .single();
+
+    if (existingData?.referral_code) {
+      return existingData.referral_code;
+    }
+
+    // Generate a unique referral code
+    let attempts = 0;
+    let newCode: string | null = null;
+    const maxAttempts = 10;
+
+    while (attempts < maxAttempts) {
+      const candidateCode = generateReferralCode();
+      
+      // Check if code already exists
+      const { data: existingCode } = await supabase
+        .from("user_stats")
+        .select("referral_code")
+        .eq("referral_code", candidateCode)
+        .single();
+
+      if (!existingCode) {
+        newCode = candidateCode;
+        break;
+      }
+      attempts++;
+    }
+
+    if (!newCode) {
+      console.error("Failed to generate unique referral code after attempts");
+      return null;
+    }
+
+    // Update or insert user with referral code
+    const { error } = await supabase
+      .from("user_stats")
+      .upsert(
+        {
+          user_address: userAddress,
+          referral_code: newCode,
+          points: existingData ? undefined : 0,
+          daily_streak: existingData ? undefined : 0,
+          claimed_task_ids: existingData ? undefined : [],
+        },
+        { onConflict: "user_address" },
+      );
+
+    if (error) {
+      console.warn("Failed to save referral code:", error);
+      return null;
+    }
+
+    return newCode;
+  } catch (err) {
+    console.error("getOrCreateReferralCode error:", err);
+    return null;
+  }
+}
+
+/**
  * Increment referral count for a referrer (create row if missing)
  */
 export async function incrementReferralCount(
@@ -248,10 +327,12 @@ export async function incrementReferralCount(
       return true;
     }
 
-    // Insert new row
+    // Insert new row with a referral code
+    const referralCode = await getOrCreateReferralCode(referrerAddress);
     const { error } = await supabase.from("user_stats").insert({
       user_address: referrerAddress,
       referral_count: 1,
+      referral_code: referralCode,
       points: 0,
       daily_streak: 0,
       claimed_task_ids: [],
