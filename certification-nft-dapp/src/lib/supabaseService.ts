@@ -21,6 +21,16 @@ export interface AvatarAudit {
   created_at: string;
 }
 
+export interface TelegramUser {
+  id: number;
+  telegram_id: number;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 /**
  * Load user stats from Supabase, with localStorage fallback
  */
@@ -445,5 +455,70 @@ export async function getAllAvatarAuditsPaginated(
   } catch (err) {
     console.warn("Failed to get all avatar audits paginated:", err);
     return { data: [], total: 0, page, pageSize };
+  }
+}
+
+/**
+ * Get or create a Telegram user
+ */
+export async function getOrCreateTelegramUser(
+  telegramId: number,
+  username?: string,
+  firstName?: string,
+  lastName?: string,
+): Promise<TelegramUser | null> {
+  try {
+    // Check if user exists
+    const { data: existing } = await supabase
+      .from("telegram_users")
+      .select("*")
+      .eq("telegram_id", telegramId)
+      .single();
+
+    if (existing) {
+      // Update if info changed
+      if (
+        existing.username !== username ||
+        existing.first_name !== firstName ||
+        existing.last_name !== lastName
+      ) {
+        const { error } = await supabase
+          .from("telegram_users")
+          .update({
+            username,
+            first_name: firstName,
+            last_name: lastName,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("telegram_id", telegramId);
+
+        if (error) {
+          console.warn("Failed to update Telegram user:", error);
+        }
+      }
+      return existing;
+    }
+
+    // Create new user
+    const { data, error } = await supabase
+      .from("telegram_users")
+      .insert({
+        telegram_id: telegramId,
+        username,
+        first_name: firstName,
+        last_name: lastName,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Failed to create Telegram user:", error);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error("getOrCreateTelegramUser error:", err);
+    return null;
   }
 }
