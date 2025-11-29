@@ -1,53 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getLeaderboard, getTopReferrers, getOrCreateReferralCode } from "@/lib/supabaseService";
+import { getOrCreateReferralCode } from "@/lib/supabaseService";
 import { generateTelegramReferralLink } from "@/lib/externalLinks";
-
-interface LeaderboardEntry {
-    user_address: string;
-    points?: number;
-    referral_count?: number;
-    referral_code?: string;
-}
+import { useLeaderboardStore } from "@/lib/stores/leaderboardStore";
 
 export default function Leaderboard() {
-    const [activeTab, setActiveTab] = useState<"points" | "referrals">("points");
-    const [data, setData] = useState<LeaderboardEntry[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        loadData();
-    }, [activeTab]);
-
-    const loadData = async () => {
-        setLoading(true);
-        try {
-            let result: any[] = [];
-            if (activeTab === "points") {
-                result = await getLeaderboard(20);
-            } else {
-                result = await getTopReferrers(20);
-            }
-            
-            // Ensure all entries have referral codes (generate if missing)
-            const entriesWithCodes = await Promise.all(
-                result.map(async (entry) => {
-                    if (!entry.referral_code) {
-                        const code = await getOrCreateReferralCode(entry.user_address);
-                        return { ...entry, referral_code: code || undefined };
-                    }
-                    return entry;
-                })
-            );
-            
-            setData(entriesWithCodes);
-        } catch (error) {
-            console.error("Failed to load leaderboard:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { activeTab, data, loading, setActiveTab, loadData } = useLeaderboardStore();
 
     const truncateAddress = (address: string) => {
         if (!address) return "";
@@ -88,7 +46,7 @@ export default function Leaderboard() {
                     <thead>
                         <tr className="border-b border-gray-700 text-gray-400 uppercase text-sm">
                             <th className="p-4">Rank</th>
-                            <th className="p-4">User</th>
+                            <th className="p-4">Player</th>
                             {activeTab === "referrals" && (
                                 <th className="p-4">Referral Link</th>
                             )}
@@ -132,8 +90,23 @@ export default function Leaderboard() {
                                                 <span className="text-gray-500">#{index + 1}</span>
                                             )}
                                         </td>
-                                        <td className="p-4 font-mono text-blue-300">
-                                            {truncateAddress(entry.user_address)}
+                                        <td className="p-4">
+                                            <div className="flex items-center gap-3">
+                                                {entry.avatar_url ? (
+                                                    <img
+                                                        src={entry.avatar_url}
+                                                        alt="Avatar"
+                                                        className="w-8 h-8 rounded-full border border-gray-600"
+                                                    />
+                                                ) : (
+                                                    <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white">
+                                                        {entry.user_address.slice(0, 1).toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <span className="font-mono text-blue-300 text-sm">
+                                                    {truncateAddress(entry.user_address)}
+                                                </span>
+                                            </div>
                                         </td>
                                         {activeTab === "referrals" && (
                                             <td className="p-4">

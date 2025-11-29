@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import BadgesPanel from "@/components/BadgesPanel";
-import Leaderboard from "@/components/Leaderboard";
+import { LeaderboardTab } from "@/components/LeaderboardTab";
 
 interface RewardsTabProps {
   userAddress?: string | null;
@@ -44,7 +44,7 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
       </div>
 
       <div className="mb-8">
-        <Leaderboard />
+        <LeaderboardTab userAddress={userAddress} />
       </div>
 
       <div className="mt-6">

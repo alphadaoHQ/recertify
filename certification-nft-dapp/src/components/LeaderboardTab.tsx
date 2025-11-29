@@ -4,16 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { RankCard } from "./RankCard";
 import { RiTrophyFill, RiFireFill } from "react-icons/ri";
 import { getTelegramUser, isInTelegram } from "@/lib/telegram";
-
-interface LeaderboardUser {
-  user_address: string;
-  points: number;
-  telegram_id?: number;
-  referral_count?: number;
-  created_at?: string;
-  avatar?: string | null;
-  user_name?: string | null;
-}
+import { useLeaderboardStore } from "@/lib/stores/leaderboardStore";
 
 type LeaderboardType = "daily" | "weekly" | "alltime";
 
@@ -22,17 +13,10 @@ interface LeaderboardTabProps {
 }
 
 export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) => {
-  const [activeTab, setActiveTab] = useState<LeaderboardType>("alltime");
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardUser[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { leaderboardType, data: leaderboardData, loading, setLeaderboardType, fetchLeaderboard } = useLeaderboardStore();
 
   // keep previous ranks to animate changes
   const previousRanksRef = useRef<Record<string, number>>({});
-
-  useEffect(() => {
-    fetchLeaderboard(activeTab);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
 
   // detect telegram user (client-only)
   const [telegramUser, setTelegramUser] = useState<any | null>(null);
@@ -43,34 +27,9 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) =
     }
   }, []);
 
-  const fetchLeaderboard = async (type: LeaderboardType) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/leaderboard?limit=10&type=${type}`);
-      const json = await res.json();
-      if (json.success && Array.isArray(json.data)) {
-        // save previous ranks
-        const prev: Record<string, number> = {};
-        leaderboardData.forEach((u, i) => {
-          prev[u.user_address] = i + 1;
-        });
-        previousRanksRef.current = prev;
-
-        setLeaderboardData(json.data || []);
-      } else {
-        setLeaderboardData([]);
-      }
-    } catch (err) {
-      console.error("Failed to fetch leaderboard:", err);
-      setLeaderboardData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Fetch avatars from Telegram API (requires bot) - placeholder
-  const getTelegramAvatar = (u: LeaderboardUser): string | undefined => {
-    if ((u as any).avatar_url) return (u as any).avatar_url as string;
+  const getTelegramAvatar = (u: any): string | undefined => {
+    if (u.avatar_url) return u.avatar_url;
     return undefined;
   };
 
@@ -108,8 +67,8 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) =
           {tabConfigs.map((t) => (
             <button
               key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              className={`text-xs px-2 py-1 rounded-md font-medium ${activeTab === t.id ? "bg-white/8 text-white" : "text-white/60 hover:bg-white/4"}`}
+              onClick={() => setLeaderboardType(t.id)}
+              className={`text-xs px-2 py-1 rounded-md font-medium ${leaderboardType === t.id ? "bg-white/8 text-white" : "text-white/60 hover:bg-white/4"}`}
             >
               <span className="inline-flex items-center gap-1">{t.icon}<span className="ml-1">{t.label}</span></span>
             </button>
@@ -134,7 +93,7 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) =
                 <RankCard
                   rank={index + 1}
                   userAddress={user.user_address}
-                  points={user.points}
+                  points={user.points as number || 0}
                   avatar={getTelegramAvatar(user)}
                   previousRank={previousRanksRef.current[user.user_address] ?? null}
                 />
@@ -161,7 +120,7 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) =
                   const r = await saveAvatarToServer(telegramUser.photo_url, webAppData || undefined);
                   if (r?.success) {
                     // refetch leaderboard for current tab to pick up avatar
-                    fetchLeaderboard(activeTab);
+                    fetchLeaderboard(leaderboardType);
                   } else {
                     console.warn('save avatar failed', r);
                   }
