@@ -25,6 +25,8 @@ interface TelegramUpdate {
   };
 }
 
+type TelegramMessage = NonNullable<TelegramUpdate['message']>;
+
 export class TelegramWebhookHandler {
   private botToken: string | undefined;
 
@@ -53,8 +55,8 @@ export class TelegramWebhookHandler {
   }
 
   private async handleStartCommand(
-    from: TelegramUpdate['message']['from'],
-    chat: TelegramUpdate['message']['chat'],
+    from: TelegramMessage['from'],
+    chat: TelegramMessage['chat'],
     text: string
   ): Promise<void> {
     try {
