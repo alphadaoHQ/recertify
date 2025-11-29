@@ -44,7 +44,7 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
       </div>
 
       <div className="mb-8">
-        <LeaderboardTab userAddress={userAddress} />
+        <LeaderboardTab userAddress={userAddress || undefined} />
       </div>
 
       <div className="mt-6">

@@ -3,7 +3,7 @@ import {
   CheckSquare,
   Grid3X3,
   Home as HomeIcon,
-  Settings,
+  Trophy,
 } from "lucide-react";
 
 interface TabBarProps {
@@ -21,7 +21,7 @@ export function TabBar({
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--tg-theme-bottom-bar-bg-color)] backdrop-blur-xl safe-area-inset-bottom">
       <div className="max-w-md mx-auto px-4 py-4">
         <div className="flex items-center justify-around">
-          {/* Home Tab */}
+          {/* Hub Tab */}
           <button
             onClick={() => handleTabChange("home")}
             className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
@@ -37,11 +37,11 @@ export function TabBar({
               activeTab !== "home" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
             }`}>
               <HomeIcon className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">Home</span>
+              <span className="text-xs font-medium">Hub</span>
             </div>
           </button>
 
-          {/* Tasks Tab */}
+          {/* Learn Tab */}
           <button
             onClick={() => handleTabChange("tasks")}
             className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
@@ -57,7 +57,27 @@ export function TabBar({
               activeTab !== "tasks" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
             }`}>
               <CheckSquare className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">Tasks</span>
+              <span className="text-xs font-medium">Learn</span>
+            </div>
+          </button>
+
+          {/* Earn Tab */}
+          <button
+            onClick={() => handleTabChange("rewards")}
+            className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
+              activeTab === "rewards"
+                ? "text-[var(--tg-theme-button-text-color)]"
+                : "text-[var(--tg-theme-hint-color)] hover:text-[var(--tg-theme-text-color)]"
+            }`}
+          >
+            {activeTab === "rewards" && (
+              <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
+            )}
+            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+              activeTab !== "rewards" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
+            }`}>
+              <Award className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">Earn</span>
             </div>
           </button>
 
@@ -81,45 +101,6 @@ export function TabBar({
             </div>
           </button>
 
-          {/* Admin Tab */}
-          <button
-            onClick={() => handleTabChange("admin")}
-            className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
-              activeTab === "admin"
-                ? "text-[var(--tg-theme-button-text-color)]"
-                : "text-[var(--tg-theme-hint-color)] hover:text-[var(--tg-theme-text-color)]"
-            }`}
-          >
-            {activeTab === "admin" && (
-              <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
-            )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "admin" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
-              <Settings className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">Admin</span>
-            </div>
-          </button>
-
-          {/* Rewards Tab */}
-          <button
-            onClick={() => handleTabChange("rewards")}
-            className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
-              activeTab === "rewards"
-                ? "text-[var(--tg-theme-button-text-color)]"
-                : "text-[var(--tg-theme-hint-color)] hover:text-[var(--tg-theme-text-color)]"
-            }`}
-          >
-            {activeTab === "rewards" && (
-              <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
-            )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "rewards" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
-              <Award className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">Rewards</span>
-            </div>
-          </button>
         </div>
       </div>
     </nav>

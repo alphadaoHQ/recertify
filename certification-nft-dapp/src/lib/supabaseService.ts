@@ -12,6 +12,15 @@ export interface UserStats {
   last_checkin?: string; // ISO date
 }
 
+export interface AvatarAudit {
+  id: number;
+  user_address: string;
+  avatar_url: string;
+  method: string;
+  metadata: any;
+  created_at: string;
+}
+
 /**
  * Load user stats from Supabase, with localStorage fallback
  */
@@ -347,5 +356,94 @@ export async function incrementReferralCount(
   } catch (err) {
     console.error("incrementReferralCount error:", err);
     return false;
+  }
+}
+
+/**
+ * Get paginated avatar audit records for a specific user
+ */
+export async function getAvatarAuditPaginated(
+  userAddress: string,
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<{ data: AvatarAudit[]; total: number; page: number; pageSize: number }> {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Get data
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("*")
+      .eq("user_address", userAddress)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.warn("Supabase getAvatarAuditPaginated error:", error);
+      return { data: [], total: 0, page, pageSize };
+    }
+
+    // Get total count
+    const { count, error: countError } = await supabase
+      .from("avatar_audit")
+      .select("*", { count: "exact", head: true })
+      .eq("user_address", userAddress);
+
+    if (countError) {
+      console.warn("Supabase getAvatarAuditPaginated count error:", countError);
+    }
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      pageSize,
+    };
+  } catch (err) {
+    console.warn("Failed to get avatar audit paginated:", err);
+    return { data: [], total: 0, page, pageSize };
+  }
+}
+
+/**
+ * Get paginated avatar audit records for all users (admin only)
+ */
+export async function getAllAvatarAuditsPaginated(
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<{ data: AvatarAudit[]; total: number; page: number; pageSize: number }> {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Get data
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.warn("Supabase getAllAvatarAuditsPaginated error:", error);
+      return { data: [], total: 0, page, pageSize };
+    }
+
+    // Get total count
+    const { count, error: countError } = await supabase
+      .from("avatar_audit")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      console.warn("Supabase getAllAvatarAuditsPaginated count error:", countError);
+    }
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      pageSize,
+    };
+  } catch (err) {
+    console.warn("Failed to get all avatar audits paginated:", err);
+    return { data: [], total: 0, page, pageSize };
   }
 }

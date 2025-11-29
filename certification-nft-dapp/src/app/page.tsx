@@ -2,7 +2,6 @@
 import { useTonAddress } from "@tonconnect/ui-react";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { AdminTab } from "@/components/AdminTab";
 import { GalleryTab } from "@/components/GalleryTab";
 import { Header } from "@/components/Header";
 import { HomeTab } from "@/components/HomeTab";
@@ -19,7 +18,7 @@ const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
 
 export default function Home() {
   const userAddress = useTonAddress();
-  const { isOwner, isAdmin, refetch } = useContractState();
+  const { refetch } = useContractState();
   const [_successMessage, setSuccessMessage] = useState<string | null>(null);
   const [courseProgress, setCourseProgress] = useState({
     blockchain: false,
@@ -216,17 +215,6 @@ export default function Home() {
 
           {activeTab === "rewards" && <RewardsTab userAddress={userAddress} />}
 
-          {activeTab === "admin" && (
-            <AdminTab
-              isDarkMode={isDarkMode}
-              isTransitioning={isTransitioning}
-              previousTab={previousTab}
-              userAddress={userAddress}
-              isAdmin={isAdmin}
-              isOwner={isOwner}
-              handleTransactionSuccess={handleTransactionSuccess}
-            />
-          )}
         </div>
       </main>
 
