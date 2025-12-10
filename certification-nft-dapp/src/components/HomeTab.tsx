@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react";
 import { CONTRACT_ADDRESS } from "@/lib/constants";
+import { Header } from "./Header";
 
 interface HomeTabProps {
   isDarkMode: boolean;
@@ -24,6 +25,8 @@ interface HomeTabProps {
     nfts: boolean;
   };
   handleMarkAsRead: (course: "blockchain" | "ton" | "nfts") => void;
+  activeTab: string;
+  toggleTheme: () => void;
 }
 
 export function HomeTab({
@@ -33,6 +36,8 @@ export function HomeTab({
   handleTabChange,
   courseProgress,
   handleMarkAsRead,
+  activeTab,
+  toggleTheme,
 }: HomeTabProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -47,6 +52,8 @@ export function HomeTab({
     <div
       className={`space-y-6 ${isTransitioning ? (previousTab === "gallery" ? "slide-in-left" : previousTab === "admin" ? "slide-in-left" : "fade-in") : "fade-in"}`}
     >
+      {activeTab === "home" && <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
+
       {/* Hero Section */}
 
       <section className="text-center py-8 relative overflow-hidden">

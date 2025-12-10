@@ -45,15 +45,7 @@ export function Header({ isDarkMode, toggleTheme }: HeaderProps) {
 
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h1
-                className={`text-base sm:text-lg font-black tracking-tight transition-colors duration-300 truncate ${
-                  isDarkMode
-                    ? "text-white"
-                    : "bg-gradient-to-r from-purple-950 to-purple-800 bg-clip-text text-transparent"
-                }`}
-              >
-                RECERTIFY
-              </h1>
+             
               <Sparkles
                 className={`w-3 h-3 sm:w-3.5 sm:h-3.5 transition-colors duration-300 ${
                   isDarkMode ? "text-purple-400" : "text-purple-600"

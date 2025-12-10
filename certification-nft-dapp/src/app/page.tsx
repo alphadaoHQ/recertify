@@ -3,7 +3,6 @@ import { useTonAddress } from "@tonconnect/ui-react";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { GalleryTab } from "@/components/GalleryTab";
-import { Header } from "@/components/Header";
 import { HomeTab } from "@/components/HomeTab";
 import { TabBar } from "@/components/TabBar";
 import { TasksTab } from "@/components/TasksTabRealtime";
@@ -180,8 +179,6 @@ export default function Home() {
         setShowWelcomeModal={setShowWelcomeModal}
       />
 
-      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-
       <main className="flex-1 px-4 py-6 pb-28 overflow-y-auto">
         {/* Tab Content */}
         <div className="telegram-tab-content min-h-[calc(100vh-160px)]">
@@ -193,6 +190,8 @@ export default function Home() {
               handleTabChange={handleTabChange}
               courseProgress={courseProgress}
               handleMarkAsRead={handleMarkAsRead}
+              activeTab={activeTab}
+              toggleTheme={toggleTheme}
             />
           )}
 
