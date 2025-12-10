@@ -1,10 +1,14 @@
+import { useState, useEffect } from "react";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import {
   Award,
   BookOpen,
+  Brain,
   CheckCircle,
+  CheckSquare,
   ExternalLink,
   Shield,
+  Trophy,
   Zap,
 } from "lucide-react";
 import { CONTRACT_ADDRESS } from "@/lib/constants";
@@ -30,6 +34,15 @@ export function HomeTab({
   courseProgress,
   handleMarkAsRead,
 }: HomeTabProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 3);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div
       className={`space-y-6 ${isTransitioning ? (previousTab === "gallery" ? "slide-in-left" : previousTab === "admin" ? "slide-in-left" : "fade-in") : "fade-in"}`}
@@ -55,21 +68,19 @@ export function HomeTab({
           >
             <Zap className="w-4 h-4" />
             <span className="text-sm font-semibold tracking-wide">
-              Professional NFT Certificates
+              ALPHA DAO Learning Platform
             </span>
             <Award className="w-4 h-4" />
           </div>
 
           {/* Main Heading */}
           <h1
-            className={`text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6 leading-tight ${
-              isDarkMode ? "text-white" : "text-[#14171a]"
+            className={`text-4xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight ${
+              isDarkMode ? "text--gradient-to-r from-purple-800 to-purple-950" : "text-[#14171a] "
             }`}
           >
-            ALPHA DAO
-            <span className="block bg-gradient-to-r from-purple-700 via-purple-500 to-purple-950 bg-clip-text text-transparent animate-gradientText">
-              Learning Platform
-            </span>
+            RECERTIFY
+            
           </h1>
 
           {/* Subtext */}
@@ -99,81 +110,140 @@ export function HomeTab({
             <TonConnectButton key="home-connect" />
           </div>
 
-          {/* Stats Section */}
-          <div className="grid gap-6 max-w-3xl mx-auto">
-            {/* Certificates Issued */}
+          {/* quick links */}
+          <div className="relative overflow-hidden max-w-3xl mx-auto">
             <div
-              className={`p-6 rounded-2xl border shadow-md hover:shadow-purple-800/40 transition-all duration-300 ${
-                isDarkMode
-                  ? "bg-gray-800/60 border-gray-700"
-                  : "bg-white border-gray-200"
-              }`}
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
-              <Award className="w-6 h-6 mx-auto mb-3 text-purple-500" />
-              <div
-                className={`text-3xl font-bold mb-1 ${
-                  isDarkMode ? "text-purple-400" : "text-purple-700"
-                }`}
-              >
-                1,247
+              {/* Complete Tasks */}
+              <div className="w-full flex-shrink-0 px-2">
+                <div
+                  className={`p-6 rounded-2xl border shadow-md hover:shadow-purple-800/40 transition-all duration-300 ${
+                    isDarkMode
+                      ? "bg-gray-800/60 border-gray-700"
+                      : "bg-white border-gray-200"
+                  } ${currentSlide === 0 ? 'ring-2 ring-purple-500/50 scale-105' : ''}`}
+                >
+                  <CheckSquare className="w-6 h-6 mx-auto mb-3 text-purple-500" />
+                  <h3
+                    className={`text-lg font-semibold mb-2 ${
+                      isDarkMode ? "text-white" : "text-purple-950"
+                    }`}
+                  >
+                    Complete Tasks
+                  </h3>
+                  <p
+                    className={`text-sm mb-4 leading-relaxed ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    Earn points by completing daily tasks
+                  </p>
+                  <button
+                    onClick={() => handleTabChange("tasks")}
+                    className={`w-full px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                      isDarkMode
+                        ? "bg-purple-700 text-white hover:bg-purple-600 hover:scale-105"
+                        : "bg-purple-700 text-white hover:bg-purple-800 hover:scale-105"
+                    }`}
+                  >
+                    Go to Tasks
+                  </button>
+                </div>
               </div>
-              <p
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Certificates Issued
-              </p>
+
+              {/* Take Quiz */}
+              <div className="w-full flex-shrink-0 px-2">
+                <div
+                  className={`p-6 rounded-2xl border shadow-md hover:shadow-purple-800/40 transition-all duration-300 ring-2 ring-purple-500/30 ${
+                    isDarkMode
+                      ? "bg-gray-800/60 border-gray-700"
+                      : "bg-white border-gray-200"
+                  } ${currentSlide === 1 ? 'ring-purple-500/50 scale-105' : ''}`}
+                >
+                  <Brain className="w-6 h-6 mx-auto mb-3 text-purple-500" />
+                  <h3
+                    className={`text-lg font-semibold mb-2 ${
+                      isDarkMode ? "text-white" : "text-purple-950"
+                    }`}
+                  >
+                    Take Quiz
+                  </h3>
+                  <p
+                    className={`text-sm mb-4 leading-relaxed ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    Test your knowledge and earn rewards
+                  </p>
+                  <button
+                    onClick={() => handleTabChange("quiz")}
+                    className={`w-full px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 hover:animate-pulse hover:transform hover:translate-x-1 ${
+                      isDarkMode
+                        ? "bg-purple-700 text-white hover:bg-purple-600 hover:scale-105"
+                        : "bg-purple-700 text-white hover:bg-purple-800 hover:scale-105"
+                    }`}
+                  >
+                    <Brain className="w-4 h-4" />
+                    Start Quiz
+                  </button>
+                </div>
+              </div>
+
+              {/* View Rewards */}
+              <div className="w-full flex-shrink-0 px-2">
+                <div
+                  className={`p-6 rounded-2xl border shadow-md hover:shadow-purple-800/40 transition-all duration-300 ${
+                    isDarkMode
+                      ? "bg-gray-800/60 border-gray-700"
+                      : "bg-white border-gray-200"
+                  } ${currentSlide === 2 ? 'ring-2 ring-purple-500/50 scale-105' : ''}`}
+                >
+                  <Trophy className="w-6 h-6 mx-auto mb-3 text-purple-500" />
+                  <h3
+                    className={`text-lg font-semibold mb-2 ${
+                      isDarkMode ? "text-white" : "text-purple-950"
+                    }`}
+                  >
+                    View Rewards
+                  </h3>
+                  <p
+                    className={`text-sm mb-4 leading-relaxed ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    Check your achievements and rewards
+                  </p>
+                  <button
+                    onClick={() => handleTabChange("rewards")}
+                    className={`w-full px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                      isDarkMode
+                        ? "bg-purple-700 text-white hover:bg-purple-600 hover:scale-105"
+                        : "bg-purple-700 text-white hover:bg-purple-800 hover:scale-105"
+                    }`}
+                  >
+                    View Rewards
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Verified Owners */}
-            <div
-              className={`p-6 rounded-2xl border shadow-md hover:shadow-purple-800/40 transition-all duration-300 ${
-                isDarkMode
-                  ? "bg-gray-800/60 border-gray-700"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <CheckCircle className="w-6 h-6 mx-auto mb-3 text-purple-500" />
-              <div
-                className={`text-3xl font-bold mb-1 ${
-                  isDarkMode ? "text-purple-400" : "text-purple-700"
-                }`}
-              >
-                892
-              </div>
-              <p
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Verified Owners
-              </p>
-            </div>
-
-            {/* Uptime */}
-            <div
-              className={`p-6 rounded-2xl border shadow-md hover:shadow-purple-800/40 transition-all duration-300 ${
-                isDarkMode
-                  ? "bg-gray-800/60 border-gray-700"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <Shield className="w-6 h-6 mx-auto mb-3 text-purple-500" />
-              <div
-                className={`text-3xl font-bold mb-1 ${
-                  isDarkMode ? "text-purple-400" : "text-purple-700"
-                }`}
-              >
-                99.9%
-              </div>
-              <p
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Uptime
-              </p>
+            {/* Indicators */}
+            <div className="flex justify-center mt-6 space-x-2">
+              {[0, 1, 2].map((index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? "bg-purple-500 scale-125"
+                      : isDarkMode
+                      ? "bg-gray-600 hover:bg-gray-500"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </div>

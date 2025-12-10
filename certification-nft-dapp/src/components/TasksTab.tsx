@@ -173,7 +173,7 @@ export function TasksTab({
       }`}
     >
       {/* Stats Dashboard */}
-      <div className="rounded-2xl p-4 mb-4 border bg-gradient-to-br from-white/30 to-white/10">
+      <div className="rounded-2xl p-4 mb-4 border bg-gradient-to-r from-purple-700 via-purple-500 to-purple-950">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3

@@ -224,7 +224,7 @@ export default function Home() {
             </div>
           )}
 
-          {activeTab === "rewards" && <RewardsTab userAddress={userAddress} />}
+          {activeTab === "rewards" && <RewardsTab userAddress={userAddress} isDarkMode={isDarkMode} />}
 
         </div>
       </main>

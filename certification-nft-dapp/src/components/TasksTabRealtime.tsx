@@ -3,6 +3,7 @@ import { CheckCircle2, Circle, Sparkles, Zap } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useAnimateOnScroll } from "@/hooks/useAnimateOnScroll";
+import { StreakDisplay } from "@/components/StreakDisplay";
 import {
   EXTERNAL_LINKS,
   generateTelegramReferralLink,
@@ -466,18 +467,12 @@ export function TasksTab({
               ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
               : "bg-gray-50/80 border border-gray-200/50"
           }`}>
-            <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Daily Streak</p>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-pink-500" />
-              <span className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}>{dailyStreak}d</span>
-            </div>
-            {dailyStreak >= 3 && (
-              <div className="mt-1">
-                <span className={`text-xs font-medium ${dailyStreak >= 7 ? "text-orange-400" : "text-pink-400"}`}>
-                  {dailyStreak >= 7 ? "🔥 2x Check-in Bonus!" : "✨ 1.5x Check-in Bonus!"}
-                </span>
-              </div>
-            )}
+            <StreakDisplay
+              streak={dailyStreak}
+              lastCheckinDate={lastCheckinDate}
+              isDarkMode={isDarkMode}
+              compact={true}
+            />
           </div>
 
           <div className={`p-4 rounded-2xl ${

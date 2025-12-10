@@ -2,9 +2,11 @@
 import { useEffect, useState } from "react";
 import BadgesPanel from "@/components/BadgesPanel";
 import { LeaderboardTab } from "@/components/LeaderboardTab";
+import { StreakDisplay } from "@/components/StreakDisplay";
 
 interface RewardsTabProps {
   userAddress?: string | null;
+  isDarkMode?: boolean;
 }
 
 function shortAddr(addr: string | null | undefined) {
@@ -12,12 +14,13 @@ function shortAddr(addr: string | null | undefined) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
-export default function RewardsTab({ userAddress }: RewardsTabProps) {
+export default function RewardsTab({ userAddress, isDarkMode = false }: RewardsTabProps) {
   const [achievements, setAchievements] = useState<string[]>([]);
   const [userStats, setUserStats] = useState<{
     points: number;
     daily_streak: number;
     level: number;
+    last_checkin?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
               points: stats.points,
               daily_streak: stats.daily_streak || 0,
               level,
+              last_checkin: stats.last_checkin,
             });
           }
         }
@@ -91,6 +95,18 @@ export default function RewardsTab({ userAddress }: RewardsTabProps) {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Streak Display Section */}
+      {userStats && userStats.daily_streak > 0 && (
+        <div className="mb-6">
+          <StreakDisplay
+            streak={userStats.daily_streak}
+            lastCheckinDate={userStats.last_checkin}
+            isDarkMode={isDarkMode}
+            compact={false}
+          />
         </div>
       )}
 
