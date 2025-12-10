@@ -15,18 +15,20 @@ interface LeaderboardState {
   activeTab: "points" | "referrals";
   data: LeaderboardEntry[];
   loading: boolean;
+  userRank: number | null;
   setActiveTab: (tab: "points" | "referrals") => void;
   loadData: () => Promise<void>;
   // For LeaderboardTab
   leaderboardType: LeaderboardType;
   setLeaderboardType: (type: LeaderboardType) => void;
-  fetchLeaderboard: (type?: LeaderboardType) => Promise<void>;
+  fetchLeaderboard: (type?: LeaderboardType, userAddress?: string) => Promise<void>;
 }
 
 export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
   activeTab: "points",
   data: [],
   loading: false,
+  userRank: null,
   leaderboardType: "alltime",
 
   setActiveTab: (tab) => {
@@ -70,20 +72,27 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
     get().fetchLeaderboard(type);
   },
 
-  fetchLeaderboard: async (type) => {
+  fetchLeaderboard: async (type, userAddress) => {
     const currentType = type || get().leaderboardType;
     set({ loading: true });
     try {
-      const res = await fetch(`/api/leaderboard?limit=10&type=${currentType}`);
+      const params = new URLSearchParams({
+        limit: "10",
+        type: currentType,
+      });
+      if (userAddress) {
+        params.append("userAddress", userAddress);
+      }
+      const res = await fetch(`/api/leaderboard?${params}`);
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
-        set({ data: json.data || [] });
+        set({ data: json.data || [], userRank: json.userRank || null });
       } else {
-        set({ data: [] });
+        set({ data: [], userRank: null });
       }
     } catch (err) {
       console.error("Failed to fetch leaderboard:", err);
-      set({ data: [] });
+      set({ data: [], userRank: null });
     } finally {
       set({ loading: false });
     }

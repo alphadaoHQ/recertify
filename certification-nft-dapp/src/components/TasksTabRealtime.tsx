@@ -85,7 +85,7 @@ export function TasksTab({
       id: "e1",
       title: "Daily Check-in",
       description: "Open the app and check in today",
-      reward: 10,
+      reward: 10, // Base reward, will be modified by streak bonus
       category: "Engagement",
       frequency: "Daily",
       completed: false,
@@ -194,6 +194,17 @@ export function TasksTab({
   const level = Math.max(1, Math.floor(totalPoints / 500) + 1);
   const [showRewards, setShowRewards] = useState(false);
 
+  // Calculate dynamic check-in reward based on streak
+  const getCheckinReward = () => {
+    const baseReward = 10;
+    if (dailyStreak >= 7) {
+      return baseReward * 2; // 100% bonus for 7+ day streak
+    } else if (dailyStreak >= 3) {
+      return Math.round(baseReward * 1.5); // 50% bonus for 3+ day streak
+    }
+    return baseReward;
+  };
+
   async function persistUserStats(address: string) {
     const claimedTaskIds = tasks.filter((t) => t.claimed).map((t) => t.id);
     const points = tasks
@@ -263,7 +274,18 @@ export function TasksTab({
       case "checkin":
         // Only allow one check-in per day
         if (!hasCheckedInToday(lastCheckinDate)) {
-          setDailyStreak((s) => s + 1);
+          // Check if this is a consecutive day (yesterday was the last check-in)
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          const isConsecutive = lastCheckinDate === yesterdayStr;
+
+          if (isConsecutive) {
+            setDailyStreak((s) => s + 1);
+          } else {
+            // Reset streak if not consecutive
+            setDailyStreak(1);
+          }
         }
         break;
       default:
@@ -287,12 +309,54 @@ export function TasksTab({
       triggerHapticFeedback('medium');
     }
 
+    // Calculate streak bonus for daily check-in
+    let bonusMultiplier = 1;
+    let bonusMessage = "";
+    if (t.id === "e1") { // Daily Check-in task
+      if (dailyStreak >= 7) {
+        bonusMultiplier = 2.0; // 100% bonus for 7+ day streak
+        bonusMessage = "🔥 7-Day Streak Bonus!";
+      } else if (dailyStreak >= 3) {
+        bonusMultiplier = 1.5; // 50% bonus for 3+ day streak
+        bonusMessage = "✨ Streak Bonus!";
+      }
+    }
+
+    const finalReward = Math.round(t.reward * bonusMultiplier);
+
+    // Update task with final reward for display
     setTasks((prev) =>
-      prev.map((x) => (x.id === id ? { ...x, claimed: true } : x)),
+      prev.map((x) => (x.id === id ? { ...x, claimed: true, reward: finalReward } : x)),
     );
 
     if (userAddress) {
-      await persistUserStats(userAddress);
+      // Update points calculation to include bonus
+      const claimedTaskIds = tasks.filter((task) => task.claimed || task.id === id).map((task) => task.id);
+      const points = tasks
+        .filter((task) => task.claimed || task.id === id)
+        .reduce((s, task) => {
+          if (task.id === id) {
+            return s + finalReward; // Use the bonus-adjusted reward
+          }
+          return s + task.reward;
+        }, 0);
+
+      const today = getTodayDateString();
+
+      // Save to both localStorage and Supabase
+      await saveUserStats(userAddress, {
+        points,
+        daily_streak: dailyStreak,
+        claimed_task_ids: claimedTaskIds,
+        last_checkin: today,
+      });
+
+      // Show bonus notification if applicable
+      if (bonusMessage && isInTelegram()) {
+        // Could add a toast notification here
+        console.log(`${bonusMessage} +${finalReward} points!`);
+      }
+
       // award first-claim achievement via server API
       try {
         await fetch(`/api/award-achievement`, {
@@ -407,6 +471,13 @@ export function TasksTab({
               <Sparkles className="w-5 h-5 text-pink-500" />
               <span className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}>{dailyStreak}d</span>
             </div>
+            {dailyStreak >= 3 && (
+              <div className="mt-1">
+                <span className={`text-xs font-medium ${dailyStreak >= 7 ? "text-orange-400" : "text-pink-400"}`}>
+                  {dailyStreak >= 7 ? "🔥 2x Check-in Bonus!" : "✨ 1.5x Check-in Bonus!"}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className={`p-4 rounded-2xl ${
@@ -530,8 +601,13 @@ export function TasksTab({
                       <span
                         className={`font-bold text-sm ${task.completed ? "text-green-600" : "text-yellow-600"}`}
                       >
-                        +{task.reward}
+                        +{task.id === "e1" && !task.claimed ? getCheckinReward() : task.reward}
                       </span>
+                      {task.id === "e1" && !task.claimed && dailyStreak >= 3 && (
+                        <div className="text-xs text-pink-500 font-medium">
+                          {dailyStreak >= 7 ? "🔥 2x Bonus!" : "✨ 1.5x Bonus!"}
+                        </div>
+                      )}
                     </div>
 
                     {!task.completed && (

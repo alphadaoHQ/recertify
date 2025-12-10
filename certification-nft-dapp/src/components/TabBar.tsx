@@ -1,5 +1,6 @@
 import {
   Award,
+  Brain,
   CheckSquare,
   Grid3X3,
   Home as HomeIcon,
@@ -41,7 +42,7 @@ export function TabBar({
             </div>
           </button>
 
-          {/* Learn Tab */}
+          {/* Task Tab */}
           <button
             onClick={() => handleTabChange("tasks")}
             className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
@@ -57,11 +58,31 @@ export function TabBar({
               activeTab !== "tasks" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
             }`}>
               <CheckSquare className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">Learn</span>
+              <span className="text-xs font-medium">Task</span>
             </div>
           </button>
 
-          {/* Earn Tab */}
+          {/* Quiz Tab */}
+          <button
+            onClick={() => handleTabChange("quiz")}
+            className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
+              activeTab === "quiz"
+                ? "text-[var(--tg-theme-button-text-color)]"
+                : "text-[var(--tg-theme-hint-color)] hover:text-[var(--tg-theme-text-color)]"
+            }`}
+          >
+            {activeTab === "quiz" && (
+              <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
+            )}
+            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+              activeTab !== "quiz" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
+            }`}>
+              <Brain className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">Quiz</span>
+            </div>
+          </button>
+
+          {/* Rewards Tab */}
           <button
             onClick={() => handleTabChange("rewards")}
             className={`flex flex-col items-center justify-center transition-all duration-300 relative ${
@@ -77,7 +98,7 @@ export function TabBar({
               activeTab !== "rewards" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
             }`}>
               <Award className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">Earn</span>
+              <span className="text-xs font-medium">Rewards</span>
             </div>
           </button>
 

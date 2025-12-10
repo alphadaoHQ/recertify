@@ -149,11 +149,51 @@ export async function getLeaderboard(limit: number = 10, type: "daily" | "weekly
 
     // TODO: Implement filtering by type (daily/weekly) based on created_at or points_earned_date
     // For now, all types return the same all-time leaderboard
-    
+
     return data || [];
   } catch (err) {
     console.warn("Failed to fetch leaderboard:", err);
     return [];
+  }
+}
+
+/**
+ * Get user's rank in the leaderboard
+ * @param userAddress - User's address
+ * @param type - Leaderboard type (currently all return all-time)
+ * @returns Rank number (1-based) or null if user not found
+ */
+export async function getUserRank(userAddress: string, type: "daily" | "weekly" | "alltime" = "alltime"): Promise<number | null> {
+  try {
+    // Get user's points
+    const { data: userData, error: userError } = await supabase
+      .from("user_stats")
+      .select("points")
+      .eq("user_address", userAddress)
+      .single();
+
+    if (userError || !userData) {
+      return null;
+    }
+
+    const userPoints = userData.points || 0;
+
+    // Count users with higher points
+    const { count, error: countError } = await supabase
+      .from("user_stats")
+      .select("*", { count: "exact", head: true })
+      .gt("points", userPoints);
+
+    if (countError) {
+      console.warn("Supabase getUserRank count error:", countError);
+      return null;
+    }
+
+    // Rank is count of higher scores + 1
+    return (count || 0) + 1;
+  } catch (err) {
+    console.warn("Failed to get user rank:", err);
+    return null;
   }
 }
 

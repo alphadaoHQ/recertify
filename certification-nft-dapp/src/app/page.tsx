@@ -213,6 +213,17 @@ export default function Home() {
             />
           )}
 
+          {activeTab === "quiz" && (
+            <div className="text-center py-8">
+              <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                Quiz Coming Soon
+              </h2>
+              <p className={`text-lg ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                Interactive quizzes on certification topics will be available here.
+              </p>
+            </div>
+          )}
+
           {activeTab === "rewards" && <RewardsTab userAddress={userAddress} />}
 
         </div>

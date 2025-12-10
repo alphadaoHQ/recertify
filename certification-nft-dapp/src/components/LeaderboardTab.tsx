@@ -13,7 +13,7 @@ interface LeaderboardTabProps {
 }
 
 export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) => {
-  const { leaderboardType, data: leaderboardData, loading, setLeaderboardType, fetchLeaderboard } = useLeaderboardStore();
+  const { leaderboardType, data: leaderboardData, loading, userRank, setLeaderboardType, fetchLeaderboard } = useLeaderboardStore();
 
   // keep previous ranks to animate changes
   const previousRanksRef = useRef<Record<string, number>>({});
@@ -26,6 +26,15 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) =
       setTelegramUser(tu || null);
     }
   }, []);
+
+  // Fetch leaderboard data with user rank
+  useEffect(() => {
+    if (userAddress) {
+      fetchLeaderboard(leaderboardType, userAddress);
+    } else {
+      fetchLeaderboard(leaderboardType);
+    }
+  }, [leaderboardType, userAddress, fetchLeaderboard]);
 
   // Fetch avatars from Telegram API (requires bot) - placeholder
   const getTelegramAvatar = (u: any): string | undefined => {
@@ -75,6 +84,12 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({ userAddress }) =
           ))}
         </div>
       </div>
+
+      {userRank && (
+        <div className="mb-3 text-sm text-purple-300/70">
+          Your Rank: #{userRank}
+        </div>
+      )}
 
       <div>
         {loading ? (
