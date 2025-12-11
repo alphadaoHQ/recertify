@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "./providers";
 import "./globals.css";
 import "./tonconnect.css";
@@ -41,6 +42,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} h-screen overflow-y-auto`}>
         <Providers>{children}</Providers>
+        <SpeedInsights />
       </body>
     </html>
   );
