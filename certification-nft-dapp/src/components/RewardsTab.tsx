@@ -14,7 +14,10 @@ function shortAddr(addr: string | null | undefined) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
-export default function RewardsTab({ userAddress, isDarkMode = false }: RewardsTabProps) {
+export default function RewardsTab({
+  userAddress,
+  isDarkMode = false,
+}: RewardsTabProps) {
   const [achievements, setAchievements] = useState<string[]>([]);
   const [userStats, setUserStats] = useState<{
     points: number;
@@ -37,7 +40,9 @@ export default function RewardsTab({ userAddress, isDarkMode = false }: RewardsT
           setAchievements(jsonA.success ? jsonA.data : []);
 
           // Load user stats for level calculation
-          const stats = await import("@/lib/supabaseService").then(m => m.loadUserStats(userAddress));
+          const stats = await import("@/lib/supabaseService").then((m) =>
+            m.loadUserStats(userAddress),
+          );
           if (stats) {
             const level = Math.max(1, Math.floor(stats.points / 500) + 1);
             setUserStats({
@@ -80,18 +85,26 @@ export default function RewardsTab({ userAddress, isDarkMode = false }: RewardsT
 
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30">
-              <p className="text-xs font-medium mb-2 text-gray-400">Total Points</p>
+              <p className="text-xs font-medium mb-2 text-gray-400">
+                Total Points
+              </p>
               <div className="flex items-center gap-2">
                 <span className="text-yellow-400">⚡</span>
-                <span className="font-bold text-xl text-white">{userStats.points}</span>
+                <span className="font-bold text-xl text-white">
+                  {userStats.points}
+                </span>
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30">
-              <p className="text-xs font-medium mb-2 text-gray-400">Daily Streak</p>
+              <p className="text-xs font-medium mb-2 text-gray-400">
+                Daily Streak
+              </p>
               <div className="flex items-center gap-2">
                 <span className="text-pink-400">✨</span>
-                <span className="font-bold text-xl text-white">{userStats.daily_streak}d</span>
+                <span className="font-bold text-xl text-white">
+                  {userStats.daily_streak}d
+                </span>
               </div>
             </div>
           </div>

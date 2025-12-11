@@ -34,9 +34,13 @@ export function TabBar({
             {activeTab === "home" && (
               <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
             )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "home" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
+            <div
+              className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+                activeTab !== "home"
+                  ? "hover:bg-[var(--tg-theme-secondary-bg-color)]"
+                  : ""
+              }`}
+            >
               <HomeIcon className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">Hub</span>
             </div>
@@ -54,9 +58,13 @@ export function TabBar({
             {activeTab === "tasks" && (
               <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
             )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "tasks" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
+            <div
+              className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+                activeTab !== "tasks"
+                  ? "hover:bg-[var(--tg-theme-secondary-bg-color)]"
+                  : ""
+              }`}
+            >
               <CheckSquare className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">Task</span>
             </div>
@@ -74,9 +82,13 @@ export function TabBar({
             {activeTab === "quiz" && (
               <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
             )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "quiz" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
+            <div
+              className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+                activeTab !== "quiz"
+                  ? "hover:bg-[var(--tg-theme-secondary-bg-color)]"
+                  : ""
+              }`}
+            >
               <Brain className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">Quiz</span>
             </div>
@@ -94,9 +106,13 @@ export function TabBar({
             {activeTab === "rewards" && (
               <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
             )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "rewards" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
+            <div
+              className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+                activeTab !== "rewards"
+                  ? "hover:bg-[var(--tg-theme-secondary-bg-color)]"
+                  : ""
+              }`}
+            >
               <Award className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">Rewards</span>
             </div>
@@ -114,14 +130,17 @@ export function TabBar({
             {activeTab === "gallery" && (
               <div className="absolute -inset-2 bg-[var(--tg-theme-button-color)] rounded-full shadow-lg shadow-[var(--tg-theme-button-color)]/50" />
             )}
-            <div className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
-              activeTab !== "gallery" ? "hover:bg-[var(--tg-theme-secondary-bg-color)]" : ""
-            }`}>
+            <div
+              className={`relative z-10 flex flex-col items-center p-2 rounded-full transition-all duration-300 ${
+                activeTab !== "gallery"
+                  ? "hover:bg-[var(--tg-theme-secondary-bg-color)]"
+                  : ""
+              }`}
+            >
               <Grid3X3 className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">Gallery</span>
             </div>
           </button>
-
         </div>
       </div>
     </nav>

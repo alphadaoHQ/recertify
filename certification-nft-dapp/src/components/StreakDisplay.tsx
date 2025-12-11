@@ -13,7 +13,7 @@ export function StreakDisplay({
   streak,
   lastCheckinDate,
   isDarkMode,
-  compact = false
+  compact = false,
 }: StreakDisplayProps) {
   const [showCelebration, setShowCelebration] = useState(false);
 
@@ -43,10 +43,14 @@ export function StreakDisplay({
   };
 
   const getStreakTier = () => {
-    if (streak >= 30) return { name: "Legendary", color: "text-red-400", bg: "bg-red-900/20" };
-    if (streak >= 14) return { name: "Epic", color: "text-orange-400", bg: "bg-orange-900/20" };
-    if (streak >= 7) return { name: "Rare", color: "text-yellow-400", bg: "bg-yellow-900/20" };
-    if (streak >= 3) return { name: "Uncommon", color: "text-pink-400", bg: "bg-pink-900/20" };
+    if (streak >= 30)
+      return { name: "Legendary", color: "text-red-400", bg: "bg-red-900/20" };
+    if (streak >= 14)
+      return { name: "Epic", color: "text-orange-400", bg: "bg-orange-900/20" };
+    if (streak >= 7)
+      return { name: "Rare", color: "text-yellow-400", bg: "bg-yellow-900/20" };
+    if (streak >= 3)
+      return { name: "Uncommon", color: "text-pink-400", bg: "bg-pink-900/20" };
     return { name: "Common", color: "text-gray-400", bg: "bg-gray-900/20" };
   };
 
@@ -57,7 +61,9 @@ export function StreakDisplay({
     return (
       <div className="flex items-center gap-2">
         <Flame className={`${getFlameSize()} ${getFlameColor()}`} />
-        <span className={`font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+        <span
+          className={`font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+        >
           {streak}d
         </span>
         {bonusMultiplier > 1 && (
@@ -70,7 +76,9 @@ export function StreakDisplay({
   }
 
   return (
-    <div className={`relative rounded-2xl p-4 ${tier.bg} border ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
+    <div
+      className={`relative rounded-2xl p-4 ${tier.bg} border ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}
+    >
       {/* Celebration Overlay */}
       {showCelebration && (
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-pink-400/20 rounded-2xl flex items-center justify-center z-10 animate-pulse">
@@ -86,13 +94,17 @@ export function StreakDisplay({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Flame className={`${getFlameSize()} ${getFlameColor()} animate-pulse`} />
+            <Flame
+              className={`${getFlameSize()} ${getFlameColor()} animate-pulse`}
+            />
             {streak >= 7 && (
               <Sparkles className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1 animate-bounce" />
             )}
           </div>
           <div>
-            <h4 className={`font-bold text-lg ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            <h4
+              className={`font-bold text-lg ${isDarkMode ? "text-white" : "text-gray-900"}`}
+            >
               {streak} Day Streak
             </h4>
             <p className={`text-sm ${tier.color} font-medium`}>
@@ -106,9 +118,7 @@ export function StreakDisplay({
             <div className="text-2xl font-bold text-yellow-400">
               {bonusMultiplier}x
             </div>
-            <div className="text-xs text-yellow-400/70">
-              Check-in Bonus
-            </div>
+            <div className="text-xs text-yellow-400/70">Check-in Bonus</div>
           </div>
         )}
       </div>
@@ -143,7 +153,8 @@ export function StreakDisplay({
         <div className="mt-3 pt-3 border-t border-gray-600/30">
           <div className="flex items-center justify-between text-xs">
             <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
-              Next milestone: {streak >= 7 ? "Keep it up!" : `${7 - streak} days to 2x bonus`}
+              Next milestone:{" "}
+              {streak >= 7 ? "Keep it up!" : `${7 - streak} days to 2x bonus`}
             </span>
             <div className="flex items-center gap-1">
               <Flame className="w-3 h-3 text-orange-400" />

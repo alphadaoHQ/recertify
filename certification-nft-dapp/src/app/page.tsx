@@ -8,7 +8,12 @@ import { TabBar } from "@/components/TabBar";
 import { TasksTab } from "@/components/TasksTabRealtime";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { useContractState } from "@/hooks/useContractState";
-import { getTelegramUser, isInTelegram, setTelegramTheme, triggerHapticFeedback } from "@/lib/telegram";
+import {
+  getTelegramUser,
+  isInTelegram,
+  setTelegramTheme,
+  triggerHapticFeedback,
+} from "@/lib/telegram";
 
 const RewardsTab = dynamic(() => import("@/components/RewardsTab"), {
   ssr: false,
@@ -118,7 +123,7 @@ export default function Home() {
 
     // Add haptic feedback for tab changes in Telegram
     if (isInTelegram()) {
-      triggerHapticFeedback('light');
+      triggerHapticFeedback("light");
     }
 
     setPreviousTab(activeTab);
@@ -214,17 +219,23 @@ export default function Home() {
 
           {activeTab === "quiz" && (
             <div className="text-center py-8">
-              <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+              <h2
+                className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
                 Quiz Coming Soon
               </h2>
-              <p className={`text-lg ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Interactive quizzes on certification topics will be available here.
+              <p
+                className={`text-lg ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+              >
+                Interactive quizzes on certification topics will be available
+                here.
               </p>
             </div>
           )}
 
-          {activeTab === "rewards" && <RewardsTab userAddress={userAddress} isDarkMode={isDarkMode} />}
-
+          {activeTab === "rewards" && (
+            <RewardsTab userAddress={userAddress} isDarkMode={isDarkMode} />
+          )}
         </div>
       </main>
 

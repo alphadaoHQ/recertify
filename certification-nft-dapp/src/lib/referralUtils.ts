@@ -22,4 +22,3 @@ export function generateReferralCode(): string {
 export function isValidReferralCode(code: string): boolean {
   return /^[A-Z0-9]{8}$/.test(code);
 }
-

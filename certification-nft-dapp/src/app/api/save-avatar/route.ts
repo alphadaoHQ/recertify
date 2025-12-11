@@ -13,7 +13,10 @@ function parseInitData(initData: string): Record<string, string> {
   return obj;
 }
 
-function verifyTelegramInitData(initData: string, botToken: string | undefined) {
+function verifyTelegramInitData(
+  initData: string,
+  botToken: string | undefined,
+) {
   if (!botToken) return false;
   const data = parseInitData(initData);
   const hash = data.hash || data["hash"];
@@ -24,7 +27,10 @@ function verifyTelegramInitData(initData: string, botToken: string | undefined) 
   const dataCheckString = keys.map((k) => `${k}=${data[k]}`).join("\n");
 
   const secretKey = crypto.createHash("sha256").update(botToken).digest();
-  const hmac = crypto.createHmac("sha256", secretKey).update(dataCheckString).digest("hex");
+  const hmac = crypto
+    .createHmac("sha256", secretKey)
+    .update(dataCheckString)
+    .digest("hex");
 
   return hmac === hash;
 }
@@ -35,7 +41,10 @@ export async function POST(request: Request) {
     const { userAddress, avatarUrl, initData, adminKey } = body || {};
 
     if (!userAddress || !avatarUrl) {
-      return NextResponse.json({ success: false, message: "Missing userAddress or avatarUrl" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Missing userAddress or avatarUrl" },
+        { status: 400 },
+      );
     }
 
     // Allow trusted server calls using ADMIN_API_KEY env var
@@ -43,11 +52,17 @@ export async function POST(request: Request) {
     if (adminKey && ADMIN_API_KEY && adminKey === ADMIN_API_KEY) {
       const { error } = await supabase
         .from("user_stats")
-        .upsert({ user_address: userAddress, avatar_url: avatarUrl }, { onConflict: "user_address" });
+        .upsert(
+          { user_address: userAddress, avatar_url: avatarUrl },
+          { onConflict: "user_address" },
+        );
 
       if (error) {
         console.warn("save-avatar upsert error (admin):", error);
-        return NextResponse.json({ success: false, message: "DB upsert failed" }, { status: 500 });
+        return NextResponse.json(
+          { success: false, message: "DB upsert failed" },
+          { status: 500 },
+        );
       }
 
       // Insert audit record
@@ -56,7 +71,10 @@ export async function POST(request: Request) {
           user_address: userAddress,
           avatar_url: avatarUrl,
           method: "admin",
-          metadata: JSON.stringify({ by: "admin", adminKey: adminKey ? "****" : null }),
+          metadata: JSON.stringify({
+            by: "admin",
+            adminKey: adminKey ? "****" : null,
+          }),
         });
       } catch (auditErr) {
         console.warn("Failed to write avatar audit (admin):", auditErr);
@@ -67,14 +85,20 @@ export async function POST(request: Request) {
 
     // Otherwise require Telegram initData verification
     if (!initData) {
-      return NextResponse.json({ success: false, message: "Missing initData for verification" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, message: "Missing initData for verification" },
+        { status: 401 },
+      );
     }
 
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const ok = verifyTelegramInitData(initData, TELEGRAM_BOT_TOKEN);
     if (!ok) {
       console.warn("Telegram initData verification failed");
-      return NextResponse.json({ success: false, message: "Invalid Telegram initData" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, message: "Invalid Telegram initData" },
+        { status: 401 },
+      );
     }
 
     // Parse initData for richer metadata
@@ -90,11 +114,17 @@ export async function POST(request: Request) {
     // Verified — upsert
     const { error } = await supabase
       .from("user_stats")
-      .upsert({ user_address: userAddress, avatar_url: avatarUrl }, { onConflict: "user_address" });
+      .upsert(
+        { user_address: userAddress, avatar_url: avatarUrl },
+        { onConflict: "user_address" },
+      );
 
     if (error) {
       console.warn("save-avatar upsert error:", error);
-      return NextResponse.json({ success: false, message: "DB upsert failed" }, { status: 500 });
+      return NextResponse.json(
+        { success: false, message: "DB upsert failed" },
+        { status: 500 },
+      );
     }
 
     // Insert audit record for verified Telegram save
@@ -115,6 +145,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("/api/save-avatar error:", err);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server error" },
+      { status: 500 },
+    );
   }
 }

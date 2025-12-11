@@ -8,11 +8,17 @@ export async function GET(request: Request) {
     const typeParam = url.searchParams.get("type") || "alltime"; // daily | weekly | alltime
     const userAddressParam = url.searchParams.get("userAddress");
     const limit = limitParam ? parseInt(limitParam, 10) : 10;
-    const data = await getLeaderboard(limit, typeParam as "daily" | "weekly" | "alltime");
+    const data = await getLeaderboard(
+      limit,
+      typeParam as "daily" | "weekly" | "alltime",
+    );
 
     let userRank = null;
     if (userAddressParam) {
-      userRank = await getUserRank(userAddressParam, typeParam as "daily" | "weekly" | "alltime");
+      userRank = await getUserRank(
+        userAddressParam,
+        typeParam as "daily" | "weekly" | "alltime",
+      );
     }
 
     return NextResponse.json({ success: true, data, userRank });

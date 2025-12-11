@@ -134,7 +134,10 @@ export function shouldResetCheckIn(lastCheckinDate?: string): boolean {
  * @param limit - Maximum number of entries to return
  * @param type - Leaderboard type: "daily" | "weekly" | "alltime" (currently all return all-time)
  */
-export async function getLeaderboard(limit: number = 10, type: "daily" | "weekly" | "alltime" = "alltime") {
+export async function getLeaderboard(
+  limit: number = 10,
+  type: "daily" | "weekly" | "alltime" = "alltime",
+) {
   try {
     const { data, error } = await supabase
       .from("user_stats")
@@ -163,7 +166,10 @@ export async function getLeaderboard(limit: number = 10, type: "daily" | "weekly
  * @param type - Leaderboard type (currently all return all-time)
  * @returns Rank number (1-based) or null if user not found
  */
-export async function getUserRank(userAddress: string, type: "daily" | "weekly" | "alltime" = "alltime"): Promise<number | null> {
+export async function getUserRank(
+  userAddress: string,
+  type: "daily" | "weekly" | "alltime" = "alltime",
+): Promise<number | null> {
   try {
     // Get user's points
     const { data: userData, error: userError } = await supabase
@@ -313,7 +319,7 @@ export async function getOrCreateReferralCode(
 
     while (attempts < maxAttempts) {
       const candidateCode = generateReferralCode();
-      
+
       // Check if code already exists
       const { data: existingCode } = await supabase
         .from("user_stats")
@@ -334,18 +340,16 @@ export async function getOrCreateReferralCode(
     }
 
     // Update or insert user with referral code
-    const { error } = await supabase
-      .from("user_stats")
-      .upsert(
-        {
-          user_address: userAddress,
-          referral_code: newCode,
-          points: existingData ? undefined : 0,
-          daily_streak: existingData ? undefined : 0,
-          claimed_task_ids: existingData ? undefined : [],
-        },
-        { onConflict: "user_address" },
-      );
+    const { error } = await supabase.from("user_stats").upsert(
+      {
+        user_address: userAddress,
+        referral_code: newCode,
+        points: existingData ? undefined : 0,
+        daily_streak: existingData ? undefined : 0,
+        claimed_task_ids: existingData ? undefined : [],
+      },
+      { onConflict: "user_address" },
+    );
 
     if (error) {
       console.warn("Failed to save referral code:", error);
@@ -416,7 +420,12 @@ export async function getAvatarAuditPaginated(
   userAddress: string,
   page: number = 1,
   pageSize: number = 20,
-): Promise<{ data: AvatarAudit[]; total: number; page: number; pageSize: number }> {
+): Promise<{
+  data: AvatarAudit[];
+  total: number;
+  page: number;
+  pageSize: number;
+}> {
   try {
     const offset = (page - 1) * pageSize;
 
@@ -461,7 +470,12 @@ export async function getAvatarAuditPaginated(
 export async function getAllAvatarAuditsPaginated(
   page: number = 1,
   pageSize: number = 20,
-): Promise<{ data: AvatarAudit[]; total: number; page: number; pageSize: number }> {
+): Promise<{
+  data: AvatarAudit[];
+  total: number;
+  page: number;
+  pageSize: number;
+}> {
   try {
     const offset = (page - 1) * pageSize;
 
@@ -483,7 +497,10 @@ export async function getAllAvatarAuditsPaginated(
       .select("*", { count: "exact", head: true });
 
     if (countError) {
-      console.warn("Supabase getAllAvatarAuditsPaginated count error:", countError);
+      console.warn(
+        "Supabase getAllAvatarAuditsPaginated count error:",
+        countError,
+      );
     }
 
     return {

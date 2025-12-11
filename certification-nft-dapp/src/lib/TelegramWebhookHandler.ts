@@ -1,5 +1,10 @@
 import supabase from "@/lib/supabaseClient";
-import { getOrCreateTelegramUser, incrementReferralCount, saveUserStats, loadUserStats } from "@/lib/supabaseService";
+import {
+  getOrCreateTelegramUser,
+  incrementReferralCount,
+  saveUserStats,
+  loadUserStats,
+} from "@/lib/supabaseService";
 
 interface TelegramUpdate {
   update_id: number;
@@ -25,7 +30,7 @@ interface TelegramUpdate {
   };
 }
 
-type TelegramMessage = NonNullable<TelegramUpdate['message']>;
+type TelegramMessage = NonNullable<TelegramUpdate["message"]>;
 
 export class TelegramWebhookHandler {
   private botToken: string | undefined;
@@ -34,7 +39,9 @@ export class TelegramWebhookHandler {
     this.botToken = process.env.TELEGRAM_BOT_TOKEN;
   }
 
-  async handleUpdate(update: TelegramUpdate): Promise<{ ok: boolean; error?: string }> {
+  async handleUpdate(
+    update: TelegramUpdate,
+  ): Promise<{ ok: boolean; error?: string }> {
     try {
       if (!update.message) {
         return { ok: true };
@@ -55,9 +62,9 @@ export class TelegramWebhookHandler {
   }
 
   private async handleStartCommand(
-    from: TelegramMessage['from'],
-    chat: TelegramMessage['chat'],
-    text: string
+    from: TelegramMessage["from"],
+    chat: TelegramMessage["chat"],
+    text: string,
   ): Promise<void> {
     try {
       // Parse referral code
@@ -68,12 +75,15 @@ export class TelegramWebhookHandler {
         from.id,
         from.username,
         from.first_name,
-        from.last_name
+        from.last_name,
       );
 
       if (!user) {
         console.error("Failed to create Telegram user");
-        await this.sendTelegramMessage(chat.id, "Error: Failed to register user.");
+        await this.sendTelegramMessage(
+          chat.id,
+          "Error: Failed to register user.",
+        );
         return;
       }
 
@@ -96,7 +106,10 @@ export class TelegramWebhookHandler {
 
       // Handle referral if present
       if (referralCode) {
-        const referralHandled = await this.handleReferral(referralCode, userAddress);
+        const referralHandled = await this.handleReferral(
+          referralCode,
+          userAddress,
+        );
         if (!referralHandled) {
           console.warn("Referral handling failed for code:", referralCode);
         }
@@ -114,11 +127,17 @@ export class TelegramWebhookHandler {
       await this.sendTelegramMessage(chat.id, welcomeMessage);
     } catch (error) {
       console.error("Error in /start handling:", error);
-      await this.sendTelegramMessage(chat.id, "Error: Something went wrong during registration.");
+      await this.sendTelegramMessage(
+        chat.id,
+        "Error: Something went wrong during registration.",
+      );
     }
   }
 
-  private async sendTelegramMessage(chatId: number, text: string): Promise<void> {
+  private async sendTelegramMessage(
+    chatId: number,
+    text: string,
+  ): Promise<void> {
     if (!this.botToken) {
       console.error("TELEGRAM_BOT_TOKEN not set");
       return;
@@ -137,14 +156,19 @@ export class TelegramWebhookHandler {
         }),
       });
       if (!response.ok) {
-        console.error("Failed to send Telegram message:", await response.text());
+        console.error(
+          "Failed to send Telegram message:",
+          await response.text(),
+        );
       }
     } catch (error) {
       console.error("Error sending Telegram message:", error);
     }
   }
 
-  private async getUserProfilePhoto(telegramId: number): Promise<string | null> {
+  private async getUserProfilePhoto(
+    telegramId: number,
+  ): Promise<string | null> {
     if (!this.botToken) {
       console.error("TELEGRAM_BOT_TOKEN not set");
       return null;
@@ -156,7 +180,11 @@ export class TelegramWebhookHandler {
       const photosResponse = await fetch(photosUrl);
       const photosData = await photosResponse.json();
 
-      if (!photosData.ok || !photosData.result.photos || photosData.result.photos.length === 0) {
+      if (
+        !photosData.ok ||
+        !photosData.result.photos ||
+        photosData.result.photos.length === 0
+      ) {
         console.log("No profile photo found for user", telegramId);
         return null;
       }
@@ -189,10 +217,10 @@ export class TelegramWebhookHandler {
       // Upload to Supabase storage
       const fileName = `telegram_${telegramId}_${Date.now()}.jpg`;
       const { data, error } = await supabase.storage
-        .from('avatars')
+        .from("avatars")
         .upload(fileName, imageBuffer, {
-          contentType: 'image/jpeg',
-          upsert: false
+          contentType: "image/jpeg",
+          upsert: false,
         });
 
       if (error) {
@@ -202,7 +230,7 @@ export class TelegramWebhookHandler {
 
       // Get public URL
       const { data: urlData } = supabase.storage
-        .from('avatars')
+        .from("avatars")
         .getPublicUrl(fileName);
 
       return urlData.publicUrl;
@@ -217,13 +245,16 @@ export class TelegramWebhookHandler {
     return match ? match[1] : null;
   }
 
-  private async handleReferral(referralCode: string, newUserId: string): Promise<boolean> {
+  private async handleReferral(
+    referralCode: string,
+    newUserId: string,
+  ): Promise<boolean> {
     try {
       // Find referrer by referral code
       const { data: referrer, error } = await supabase
-        .from('user_stats')
-        .select('user_address, points')
-        .eq('referral_code', referralCode)
+        .from("user_stats")
+        .select("user_address, points")
+        .eq("referral_code", referralCode)
         .single();
 
       if (error || !referrer) {
@@ -247,13 +278,18 @@ export class TelegramWebhookHandler {
       const newPoints = (currentStats.points || 0) + 10;
       const updatedStats = { ...currentStats, points: newPoints };
       delete (updatedStats as any).user_address; // Remove user_address for save
-      const statsSuccess = await saveUserStats(referrer.user_address, updatedStats);
+      const statsSuccess = await saveUserStats(
+        referrer.user_address,
+        updatedStats,
+      );
       if (!statsSuccess) {
         console.error("Failed to award points to referrer");
         return false;
       }
 
-      console.log(`Awarded 10 points to referrer ${referrer.user_address} for new user ${newUserId}`);
+      console.log(
+        `Awarded 10 points to referrer ${referrer.user_address} for new user ${newUserId}`,
+      );
       return true;
     } catch (error) {
       console.error("Error handling referral:", error);

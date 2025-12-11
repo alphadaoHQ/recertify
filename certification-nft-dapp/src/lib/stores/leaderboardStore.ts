@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { getLeaderboard, getTopReferrers } from '../supabaseService';
+import { create } from "zustand";
+import { getLeaderboard, getTopReferrers } from "../supabaseService";
 
 interface LeaderboardEntry {
   user_address: string;
@@ -21,7 +21,10 @@ interface LeaderboardState {
   // For LeaderboardTab
   leaderboardType: LeaderboardType;
   setLeaderboardType: (type: LeaderboardType) => void;
-  fetchLeaderboard: (type?: LeaderboardType, userAddress?: string) => Promise<void>;
+  fetchLeaderboard: (
+    type?: LeaderboardType,
+    userAddress?: string,
+  ) => Promise<void>;
 }
 
 export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
@@ -56,7 +59,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
             return { ...entry, referral_code: code || undefined };
           }
           return entry;
-        })
+        }),
       );
 
       set({ data: entriesWithCodes });

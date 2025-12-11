@@ -52,7 +52,9 @@ export function HomeTab({
     <div
       className={`space-y-6 ${isTransitioning ? (previousTab === "gallery" ? "slide-in-left" : previousTab === "admin" ? "slide-in-left" : "fade-in") : "fade-in"}`}
     >
-      {activeTab === "home" && <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
+      {activeTab === "home" && (
+        <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+      )}
 
       {/* Hero Section */}
 
@@ -83,11 +85,12 @@ export function HomeTab({
           {/* Main Heading */}
           <h1
             className={`text-4xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight ${
-              isDarkMode ? "text--gradient-to-r from-purple-800 to-purple-950" : "text-[#14171a] "
+              isDarkMode
+                ? "text--gradient-to-r from-purple-800 to-purple-950"
+                : "text-[#14171a] "
             }`}
           >
             RECERTIFY
-            
           </h1>
 
           {/* Subtext */}
@@ -130,7 +133,7 @@ export function HomeTab({
                     isDarkMode
                       ? "bg-gray-800/60 border-gray-700"
                       : "bg-white border-gray-200"
-                  } ${currentSlide === 0 ? 'ring-2 ring-purple-500/50 scale-105' : ''}`}
+                  } ${currentSlide === 0 ? "ring-2 ring-purple-500/50 scale-105" : ""}`}
                 >
                   <CheckSquare className="w-6 h-6 mx-auto mb-3 text-purple-500" />
                   <h3
@@ -167,7 +170,7 @@ export function HomeTab({
                     isDarkMode
                       ? "bg-gray-800/60 border-gray-700"
                       : "bg-white border-gray-200"
-                  } ${currentSlide === 1 ? 'ring-purple-500/50 scale-105' : ''}`}
+                  } ${currentSlide === 1 ? "ring-purple-500/50 scale-105" : ""}`}
                 >
                   <Brain className="w-6 h-6 mx-auto mb-3 text-purple-500" />
                   <h3
@@ -205,7 +208,7 @@ export function HomeTab({
                     isDarkMode
                       ? "bg-gray-800/60 border-gray-700"
                       : "bg-white border-gray-200"
-                  } ${currentSlide === 2 ? 'ring-2 ring-purple-500/50 scale-105' : ''}`}
+                  } ${currentSlide === 2 ? "ring-2 ring-purple-500/50 scale-105" : ""}`}
                 >
                   <Trophy className="w-6 h-6 mx-auto mb-3 text-purple-500" />
                   <h3
@@ -246,8 +249,8 @@ export function HomeTab({
                     index === currentSlide
                       ? "bg-purple-500 scale-125"
                       : isDarkMode
-                      ? "bg-gray-600 hover:bg-gray-500"
-                      : "bg-gray-300 hover:bg-gray-400"
+                        ? "bg-gray-600 hover:bg-gray-500"
+                        : "bg-gray-300 hover:bg-gray-400"
                   }`}
                 />
               ))}
@@ -559,8 +562,6 @@ export function HomeTab({
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 }

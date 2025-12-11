@@ -10,7 +10,10 @@ export async function POST(request: NextRequest) {
   if (result.ok) {
     return NextResponse.json({ ok: true });
   } else {
-    return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: result.error },
+      { status: 500 },
+    );
   }
 }
 

@@ -96,12 +96,16 @@ export const RankCard: React.FC<RankCardProps> = ({
         {/* User Info */}
         <div className="flex-1 min-w-0">
           <div className="font-semibold truncate">{displayName}</div>
-          <div className="text-xs text-purple-300/70 truncate">{userAddress}</div>
+          <div className="text-xs text-purple-300/70 truncate">
+            {userAddress}
+          </div>
         </div>
 
         {/* Points */}
         <div className="text-right">
-          <div className="font-bold text-lg">{points?.toLocaleString() || 0}</div>
+          <div className="font-bold text-lg">
+            {points?.toLocaleString() || 0}
+          </div>
           <div className="text-xs text-purple-300/70">points</div>
         </div>
       </div>

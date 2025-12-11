@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getAvatarAuditPaginated, getAllAvatarAuditsPaginated } from "@/lib/supabaseService";
+import {
+  getAvatarAuditPaginated,
+  getAllAvatarAuditsPaginated,
+} from "@/lib/supabaseService";
 
 export async function GET(request: Request) {
   try {
@@ -23,13 +26,22 @@ export async function GET(request: Request) {
 
     // Otherwise, require user param and return user-scoped results
     if (!user) {
-      return NextResponse.json({ success: false, message: "Missing user param (or provide valid adminKey)" }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Missing user param (or provide valid adminKey)",
+        },
+        { status: 400 },
+      );
     }
 
     const result = await getAvatarAuditPaginated(user, page, pageSize);
     return NextResponse.json({ success: true, ...result });
   } catch (err) {
     console.error("/api/avatar-audit error:", err);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server error" },
+      { status: 500 },
+    );
   }
 }

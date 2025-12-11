@@ -6,37 +6,37 @@ const nextConfig: NextConfig = {
     return [
       {
         // Apply to all routes
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
           },
           {
-            key: 'Pragma',
-            value: 'no-cache',
+            key: "Pragma",
+            value: "no-cache",
           },
           {
-            key: 'Expires',
-            value: '0',
+            key: "Expires",
+            value: "0",
           },
         ],
       },
       {
         // Specific headers for API routes
-        source: '/api/(.*)',
+        source: "/api/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
           },
           {
-            key: 'Pragma',
-            value: 'no-cache',
+            key: "Pragma",
+            value: "no-cache",
           },
           {
-            key: 'Expires',
-            value: '0',
+            key: "Expires",
+            value: "0",
           },
         ],
       },

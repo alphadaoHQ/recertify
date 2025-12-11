@@ -3,17 +3,20 @@
 import React, { useEffect, useState } from "react";
 
 const fetchAudit = async (user: string, page = 1, limit = 20) => {
-  const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
   if (user) params.set("user", user);
   const res = await fetch(`/api/avatar-audit?${params.toString()}`);
   return res.json();
 };
 
 const fetchAuditAdmin = async (adminKey: string, page = 1, limit = 20) => {
-  const params = new URLSearchParams({ 
-    adminKey, 
-    page: page.toString(), 
-    limit: limit.toString() 
+  const params = new URLSearchParams({
+    adminKey,
+    page: page.toString(),
+    limit: limit.toString(),
   });
   const res = await fetch(`/api/avatar-audit?${params.toString()}`);
   return res.json();
@@ -129,7 +132,10 @@ export default function AvatarAuditAdminPage() {
               placeholder="user_address"
               className="w-80 p-2 rounded border"
             />
-            <button onClick={load} className="px-3 py-1 bg-purple-600 text-white rounded">
+            <button
+              onClick={load}
+              className="px-3 py-1 bg-purple-600 text-white rounded"
+            >
               Load
             </button>
           </div>
@@ -146,7 +152,10 @@ export default function AvatarAuditAdminPage() {
               placeholder="Admin API Key"
               className="w-80 p-2 rounded border"
             />
-            <button onClick={load} className="px-3 py-1 bg-purple-600 text-white rounded">
+            <button
+              onClick={load}
+              className="px-3 py-1 bg-purple-600 text-white rounded"
+            >
               Load
             </button>
           </div>
@@ -161,7 +170,8 @@ export default function AvatarAuditAdminPage() {
           {/* Pagination Info */}
           {total > 0 && (
             <div className="mb-4 text-sm text-gray-600">
-              Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} of {total}
+              Showing {(page - 1) * pageSize + 1}–
+              {Math.min(page * pageSize, total)} of {total}
               {totalPages > 1 && ` (Page ${page} of ${totalPages})`}
             </div>
           )}
@@ -190,17 +200,30 @@ export default function AvatarAuditAdminPage() {
                   rows.map((r) => (
                     <tr key={r.id} className="border-t hover:bg-gray-50">
                       <td className="p-2 align-top">{r.id}</td>
-                      <td className="p-2 align-top text-sm break-words max-w-xs">{r.user_address}</td>
+                      <td className="p-2 align-top text-sm break-words max-w-xs">
+                        {r.user_address}
+                      </td>
                       <td className="p-2 align-top">{r.method}</td>
                       <td className="p-2 align-top text-sm break-words max-w-xs">
-                        <a className="text-blue-400 hover:underline" href={r.avatar_url} target="_blank" rel="noreferrer">
-                          {r.avatar_url ? r.avatar_url.substring(0, 50) + "..." : "—"}
+                        <a
+                          className="text-blue-400 hover:underline"
+                          href={r.avatar_url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {r.avatar_url
+                            ? r.avatar_url.substring(0, 50) + "..."
+                            : "—"}
                         </a>
                       </td>
                       <td className="p-2 align-top text-xs break-words max-w-sm">
-                        <pre className="whitespace-pre-wrap bg-gray-50 p-1 rounded">{JSON.stringify(r.metadata, null, 2)}</pre>
+                        <pre className="whitespace-pre-wrap bg-gray-50 p-1 rounded">
+                          {JSON.stringify(r.metadata, null, 2)}
+                        </pre>
                       </td>
-                      <td className="p-2 align-top text-sm">{new Date(r.created_at).toLocaleString()}</td>
+                      <td className="p-2 align-top text-sm">
+                        {new Date(r.created_at).toLocaleString()}
+                      </td>
                     </tr>
                   ))
                 )}

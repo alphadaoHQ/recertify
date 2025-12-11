@@ -7,14 +7,16 @@ export function PurpleTonConnectButton() {
   useEffect(() => {
     // Force purple styling after component mounts
     const interval = setInterval(() => {
-      const buttons = document.querySelectorAll('[data-tc-connect-button-root] button, [data-tc-dropdown-button-root] button');
+      const buttons = document.querySelectorAll(
+        "[data-tc-connect-button-root] button, [data-tc-dropdown-button-root] button",
+      );
       buttons.forEach((button) => {
         const htmlButton = button as HTMLElement;
-        htmlButton.style.background = '#7c3aed';
-        htmlButton.style.backgroundColor = '#7c3aed';
-        htmlButton.style.borderColor = '#7c3aed';
-        htmlButton.style.color = 'white';
-        htmlButton.style.borderRadius = '12px';
+        htmlButton.style.background = "#7c3aed";
+        htmlButton.style.backgroundColor = "#7c3aed";
+        htmlButton.style.borderColor = "#7c3aed";
+        htmlButton.style.color = "white";
+        htmlButton.style.borderRadius = "12px";
       });
     }, 100);
 

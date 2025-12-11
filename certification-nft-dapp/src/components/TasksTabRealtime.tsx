@@ -10,7 +10,12 @@ import {
   generateShareText,
   shareOrCopyLink,
 } from "@/lib/externalLinks";
-import { isInTelegram, openExternalLink, shareUrl, triggerHapticFeedback } from "@/lib/telegram";
+import {
+  isInTelegram,
+  openExternalLink,
+  shareUrl,
+  triggerHapticFeedback,
+} from "@/lib/telegram";
 import {
   getTodayDateString,
   hasCheckedInToday,
@@ -278,7 +283,7 @@ export function TasksTab({
           // Check if this is a consecutive day (yesterday was the last check-in)
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
-          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          const yesterdayStr = yesterday.toISOString().split("T")[0];
           const isConsecutive = lastCheckinDate === yesterdayStr;
 
           if (isConsecutive) {
@@ -307,13 +312,14 @@ export function TasksTab({
 
     // Add haptic feedback for claiming tasks in Telegram
     if (isInTelegram()) {
-      triggerHapticFeedback('medium');
+      triggerHapticFeedback("medium");
     }
 
     // Calculate streak bonus for daily check-in
     let bonusMultiplier = 1;
     let bonusMessage = "";
-    if (t.id === "e1") { // Daily Check-in task
+    if (t.id === "e1") {
+      // Daily Check-in task
       if (dailyStreak >= 7) {
         bonusMultiplier = 2.0; // 100% bonus for 7+ day streak
         bonusMessage = "🔥 7-Day Streak Bonus!";
@@ -327,12 +333,16 @@ export function TasksTab({
 
     // Update task with final reward for display
     setTasks((prev) =>
-      prev.map((x) => (x.id === id ? { ...x, claimed: true, reward: finalReward } : x)),
+      prev.map((x) =>
+        x.id === id ? { ...x, claimed: true, reward: finalReward } : x,
+      ),
     );
 
     if (userAddress) {
       // Update points calculation to include bonus
-      const claimedTaskIds = tasks.filter((task) => task.claimed || task.id === id).map((task) => task.id);
+      const claimedTaskIds = tasks
+        .filter((task) => task.claimed || task.id === id)
+        .map((task) => task.id);
       const points = tasks
         .filter((task) => task.claimed || task.id === id)
         .reduce((s, task) => {
@@ -395,14 +405,26 @@ export function TasksTab({
     const base = "inline-block text-xs px-3 py-1 rounded-full font-medium";
     if (frequency === "Daily")
       return (
-        <span className={`${base} ${isDarkMode ? "bg-green-900/50 text-green-300" : "bg-green-100 text-green-700"}`}>Daily</span>
+        <span
+          className={`${base} ${isDarkMode ? "bg-green-900/50 text-green-300" : "bg-green-100 text-green-700"}`}
+        >
+          Daily
+        </span>
       );
     if (frequency === "Weekly")
       return (
-        <span className={`${base} ${isDarkMode ? "bg-blue-900/50 text-blue-300" : "bg-blue-100 text-blue-700"}`}>Weekly</span>
+        <span
+          className={`${base} ${isDarkMode ? "bg-blue-900/50 text-blue-300" : "bg-blue-100 text-blue-700"}`}
+        >
+          Weekly
+        </span>
       );
     return (
-      <span className={`${base} ${isDarkMode ? "bg-purple-900/50 text-purple-300" : "bg-purple-100 text-purple-700"}`}>Special</span>
+      <span
+        className={`${base} ${isDarkMode ? "bg-purple-900/50 text-purple-300" : "bg-purple-100 text-purple-700"}`}
+      >
+        Special
+      </span>
     );
   }
 
@@ -411,11 +433,13 @@ export function TasksTab({
       className={`transition-all duration-300 ${isTransitioning && previousTab === "tasks" ? "opacity-50" : "opacity-100"}`}
     >
       {/* Stats Dashboard */}
-      <div className={`mx-4 mt-4 mb-6 rounded-3xl p-6 shadow-lg ${
-        isDarkMode
-          ? "bg-gradient-to-br from-purple-900/90 to-blue-900/90 backdrop-blur-xl border border-purple-700/50"
-          : "bg-white/80 backdrop-blur-xl border border-gray-200/50"
-      }`}>
+      <div
+        className={`mx-4 mt-4 mb-6 rounded-3xl p-6 shadow-lg ${
+          isDarkMode
+            ? "bg-gradient-to-br from-purple-900/90 to-blue-900/90 backdrop-blur-xl border border-purple-700/50"
+            : "bg-white/80 backdrop-blur-xl border border-gray-200/50"
+        }`}
+      >
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3
@@ -431,8 +455,16 @@ export function TasksTab({
           </div>
 
           <div className="text-right">
-            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Level</p>
-            <p className={`font-bold text-2xl ${isDarkMode ? "text-white" : "text-gray-900"}`}>{level}</p>
+            <p
+              className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Level
+            </p>
+            <p
+              className={`font-bold text-2xl ${isDarkMode ? "text-white" : "text-gray-900"}`}
+            >
+              {level}
+            </p>
           </div>
         </div>
 
@@ -450,23 +482,35 @@ export function TasksTab({
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className={`p-4 rounded-2xl ${
-            isDarkMode
-              ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
-              : "bg-gray-50/80 border border-gray-200/50"
-          }`}>
-            <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Points</p>
+          <div
+            className={`p-4 rounded-2xl ${
+              isDarkMode
+                ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
+                : "bg-gray-50/80 border border-gray-200/50"
+            }`}
+          >
+            <p
+              className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Total Points
+            </p>
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 text-yellow-500" />
-              <span className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}>{totalPoints}</span>
+              <span
+                className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
+                {totalPoints}
+              </span>
             </div>
           </div>
 
-          <div className={`p-4 rounded-2xl ${
-            isDarkMode
-              ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
-              : "bg-gray-50/80 border border-gray-200/50"
-          }`}>
+          <div
+            className={`p-4 rounded-2xl ${
+              isDarkMode
+                ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
+                : "bg-gray-50/80 border border-gray-200/50"
+            }`}
+          >
             <StreakDisplay
               streak={dailyStreak}
               lastCheckinDate={lastCheckinDate}
@@ -475,21 +519,37 @@ export function TasksTab({
             />
           </div>
 
-          <div className={`p-4 rounded-2xl ${
-            isDarkMode
-              ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
-              : "bg-gray-50/80 border border-gray-200/50"
-          }`}>
-            <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Completion Rate</p>
-            <div className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}>{completionRate}%</div>
+          <div
+            className={`p-4 rounded-2xl ${
+              isDarkMode
+                ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
+                : "bg-gray-50/80 border border-gray-200/50"
+            }`}
+          >
+            <p
+              className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Completion Rate
+            </p>
+            <div
+              className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-900"}`}
+            >
+              {completionRate}%
+            </div>
           </div>
 
-          <div className={`p-4 rounded-2xl ${
-            isDarkMode
-              ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
-              : "bg-gray-50/80 border border-gray-200/50"
-          }`}>
-            <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Tasks</p>
+          <div
+            className={`p-4 rounded-2xl ${
+              isDarkMode
+                ? "bg-gradient-to-br from-purple-800/60 to-blue-800/60 border border-purple-600/30"
+                : "bg-gray-50/80 border border-gray-200/50"
+            }`}
+          >
+            <p
+              className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Tasks
+            </p>
             <div className="flex gap-2 mt-1">
               <span className="text-xs px-3 py-1 rounded-full bg-blue-600 text-white font-medium">
                 All Tasks
@@ -506,152 +566,179 @@ export function TasksTab({
         </div>
       ) : (
         <div className="px-4 space-y-4">
-          {isLoading ? (
-            // Loading placeholders - iOS style
-            Array.from({ length: 6 }).map((_, index) => (
-              <div
-                key={`loading-${index}`}
-                className={`p-6 rounded-3xl shadow-lg animate-pulse ${
-                  isDarkMode
-                    ? "bg-gradient-to-br from-purple-900/80 to-blue-900/80 backdrop-blur-xl border border-purple-700/50"
-                    : "bg-white/80 backdrop-blur-xl border border-gray-200/50"
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="pt-1 flex-shrink-0">
-                    <div className={`w-6 h-6 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className={`h-4 rounded ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-3/4`} />
-                      <div className={`h-5 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-16`} />
-                    </div>
-                    <div className={`h-3 rounded mb-3 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-1/2`} />
-                    <div className={`h-2 rounded-full ${isDarkMode ? "bg-gray-700" : "bg-gray-200"} w-full`} />
-                  </div>
-                  <div className="flex-shrink-0 text-right pt-1 flex flex-col items-end gap-2">
-                    <div className={`h-4 rounded ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-12`} />
-                    <div className={`h-8 rounded-lg mt-2 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-16`} />
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            filteredTasks.map((task) => (
-              <div
-                key={task.id}
-                className={`p-6 rounded-3xl shadow-lg transition-all duration-300 hover:shadow-xl ${
-                  task.completed
-                    ? isDarkMode
-                      ? "bg-gradient-to-br from-green-900/30 to-purple-900/30 backdrop-blur-xl border border-green-700/50"
-                      : "bg-green-50/80 backdrop-blur-xl border border-green-200/50"
-                    : isDarkMode
+          {isLoading
+            ? // Loading placeholders - iOS style
+              Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={`loading-${index}`}
+                  className={`p-6 rounded-3xl shadow-lg animate-pulse ${
+                    isDarkMode
                       ? "bg-gradient-to-br from-purple-900/80 to-blue-900/80 backdrop-blur-xl border border-purple-700/50"
                       : "bg-white/80 backdrop-blur-xl border border-gray-200/50"
-                }`}
-              >
-                <div className="flex items-start gap-4 animate-on-scroll">
-                  <div className="pt-1 flex-shrink-0">
-                    {task.completed ? (
-                      <CheckCircle2 className="w-6 h-6 text-green-500" />
-                    ) : (
-                      <Circle
-                        className={`w-6 h-6 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
-                      />
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4
-                        className={`font-bold text-lg ${task.completed ? "text-green-600 line-through" : isDarkMode ? "text-white" : "text-gray-900"}`}
-                      >
-                        {task.title}
-                      </h4>
-                       <div className="flex items-center gap-2 mt-2">
-                         {renderBadge(task.frequency)}
-                       </div>
-                     </div>
-                     <p
-                       className={`text-sm mt-4 mb-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                     >
-                       {task.description}
-                     </p>
-
-                    <div className="mb-3">
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="pt-1 flex-shrink-0">
                       <div
-                        className={`h-2 rounded-full overflow-hidden ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}
-                      >
+                        className={`w-6 h-6 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
                         <div
-                          className="h-full bg-gradient-to-r from-purple-500 to-blue-600 transition-all duration-500 rounded-full"
-                          style={{ width: `${task.progress}%` }}
+                          className={`h-4 rounded ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-3/4`}
+                        />
+                        <div
+                          className={`h-5 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-16`}
                         />
                       </div>
+                      <div
+                        className={`h-3 rounded mb-3 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-1/2`}
+                      />
+                      <div
+                        className={`h-2 rounded-full ${isDarkMode ? "bg-gray-700" : "bg-gray-200"} w-full`}
+                      />
+                    </div>
+                    <div className="flex-shrink-0 text-right pt-1 flex flex-col items-end gap-2">
+                      <div
+                        className={`h-4 rounded ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-12`}
+                      />
+                      <div
+                        className={`h-8 rounded-lg mt-2 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"} w-16`}
+                      />
                     </div>
                   </div>
-
-                  <div className="flex-shrink-0 text-right pt-1 flex flex-col items-end gap-3">
-                    <div className="flex items-center gap-1 justify-end">
-                      <Zap className="w-4 h-4 text-yellow-500" />
-                      <span
-                        className={`font-bold text-sm ${task.completed ? "text-green-600" : "text-yellow-600"}`}
-                      >
-                        +{task.id === "e1" && !task.claimed ? getCheckinReward() : task.reward}
-                      </span>
-                      {task.id === "e1" && !task.claimed && dailyStreak >= 3 && (
-                        <div className="text-xs text-pink-500 font-medium">
-                          {dailyStreak >= 7 ? "🔥 2x Bonus!" : "✨ 1.5x Bonus!"}
-                        </div>
+                </div>
+              ))
+            : filteredTasks.map((task) => (
+                <div
+                  key={task.id}
+                  className={`p-6 rounded-3xl shadow-lg transition-all duration-300 hover:shadow-xl ${
+                    task.completed
+                      ? isDarkMode
+                        ? "bg-gradient-to-br from-green-900/30 to-purple-900/30 backdrop-blur-xl border border-green-700/50"
+                        : "bg-green-50/80 backdrop-blur-xl border border-green-200/50"
+                      : isDarkMode
+                        ? "bg-gradient-to-br from-purple-900/80 to-blue-900/80 backdrop-blur-xl border border-purple-700/50"
+                        : "bg-white/80 backdrop-blur-xl border border-gray-200/50"
+                  }`}
+                >
+                  <div className="flex items-start gap-4 animate-on-scroll">
+                    <div className="pt-1 flex-shrink-0">
+                      {task.completed ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-500" />
+                      ) : (
+                        <Circle
+                          className={`w-6 h-6 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+                        />
                       )}
                     </div>
 
-                    {!task.completed && (
-                      <button
-                        onClick={() => startTask(task.id)}
-                        className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all hover:scale-105 ${
-                          isDarkMode ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-purple-500/25" : "bg-blue-600 text-white shadow-sm"
-                        }`}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4
+                          className={`font-bold text-lg ${task.completed ? "text-green-600 line-through" : isDarkMode ? "text-white" : "text-gray-900"}`}
+                        >
+                          {task.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                          {renderBadge(task.frequency)}
+                        </div>
+                      </div>
+                      <p
+                        className={`text-sm mt-4 mb-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                       >
-                        Start
-                      </button>
-                    )}
+                        {task.description}
+                      </p>
 
-                    {task.completed && !task.claimed && (
-                      <button
-                        onClick={() => claimTask(task.id)}
-                        className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all hover:scale-105 ${
-                          isDarkMode ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow-lg hover:shadow-yellow-500/25" : "bg-yellow-500 text-black shadow-sm"
-                        }`}
-                      >
-                        Claim
-                      </button>
-                    )}
+                      <div className="mb-3">
+                        <div
+                          className={`h-2 rounded-full overflow-hidden ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}
+                        >
+                          <div
+                            className="h-full bg-gradient-to-r from-purple-500 to-blue-600 transition-all duration-500 rounded-full"
+                            style={{ width: `${task.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
 
-                    {task.claimed && (
-                      <button
-                        disabled
-                        className={`px-4 py-2 text-sm rounded-lg font-semibold ${
-                          isDarkMode ? "bg-gray-600 text-gray-300" : "bg-gray-200 text-gray-500"
-                        }`}
-                      >
-                        Claimed
-                      </button>
-                    )}
+                    <div className="flex-shrink-0 text-right pt-1 flex flex-col items-end gap-3">
+                      <div className="flex items-center gap-1 justify-end">
+                        <Zap className="w-4 h-4 text-yellow-500" />
+                        <span
+                          className={`font-bold text-sm ${task.completed ? "text-green-600" : "text-yellow-600"}`}
+                        >
+                          +
+                          {task.id === "e1" && !task.claimed
+                            ? getCheckinReward()
+                            : task.reward}
+                        </span>
+                        {task.id === "e1" &&
+                          !task.claimed &&
+                          dailyStreak >= 3 && (
+                            <div className="text-xs text-pink-500 font-medium">
+                              {dailyStreak >= 7
+                                ? "🔥 2x Bonus!"
+                                : "✨ 1.5x Bonus!"}
+                            </div>
+                          )}
+                      </div>
+
+                      {!task.completed && (
+                        <button
+                          onClick={() => startTask(task.id)}
+                          className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all hover:scale-105 ${
+                            isDarkMode
+                              ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-purple-500/25"
+                              : "bg-blue-600 text-white shadow-sm"
+                          }`}
+                        >
+                          Start
+                        </button>
+                      )}
+
+                      {task.completed && !task.claimed && (
+                        <button
+                          onClick={() => claimTask(task.id)}
+                          className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all hover:scale-105 ${
+                            isDarkMode
+                              ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow-lg hover:shadow-yellow-500/25"
+                              : "bg-yellow-500 text-black shadow-sm"
+                          }`}
+                        >
+                          Claim
+                        </button>
+                      )}
+
+                      {task.claimed && (
+                        <button
+                          disabled
+                          className={`px-4 py-2 text-sm rounded-lg font-semibold ${
+                            isDarkMode
+                              ? "bg-gray-600 text-gray-300"
+                              : "bg-gray-200 text-gray-500"
+                          }`}
+                        >
+                          Claimed
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))}
         </div>
       )}
 
       {/* Completed Message */}
       {completedCount === tasks.length && !isLoading && (
-        <div className={`mx-4 mt-6 p-6 rounded-3xl text-center shadow-lg ${
-          isDarkMode
-            ? "bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-purple-700/50"
-            : "bg-blue-50/80 backdrop-blur-xl border border-blue-200/50"
-        }`}>
+        <div
+          className={`mx-4 mt-6 p-6 rounded-3xl text-center shadow-lg ${
+            isDarkMode
+              ? "bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-xl border border-purple-700/50"
+              : "bg-blue-50/80 backdrop-blur-xl border border-blue-200/50"
+          }`}
+        >
           <p
             className={`font-bold text-xl ${isDarkMode ? "text-purple-300" : "text-blue-600"}`}
           >

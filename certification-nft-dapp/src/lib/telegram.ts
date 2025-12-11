@@ -1,10 +1,10 @@
-import WebApp from '@twa-dev/sdk';
+import WebApp from "@twa-dev/sdk";
 
 // Telegram WebApp SDK integration
 let telegramWebApp: any = null;
 
 // Initialize WebApp only on client side
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   telegramWebApp = WebApp;
 }
 
@@ -18,19 +18,19 @@ export const initTelegramWebApp = () => {
       telegramWebApp.expand();
 
       // Set header color to match our theme
-      telegramWebApp.setHeaderColor('#008080');
+      telegramWebApp.setHeaderColor("#008080");
 
       // Enable closing confirmation (optional)
       telegramWebApp.enableClosingConfirmation();
 
       // Set background color to match our theme
-      telegramWebApp.setBackgroundColor('#f9fafb'); // light mode default
+      telegramWebApp.setBackgroundColor("#f9fafb"); // light mode default
 
       return true;
     }
     return false;
   } catch (error) {
-    console.warn('Telegram WebApp initialization failed:', error);
+    console.warn("Telegram WebApp initialization failed:", error);
     return false;
   }
 };
@@ -40,7 +40,7 @@ export const getTelegramUser = () => {
   try {
     return telegramWebApp?.initDataUnsafe?.user;
   } catch (error) {
-    console.warn('Failed to get Telegram user:', error);
+    console.warn("Failed to get Telegram user:", error);
     return null;
   }
 };
@@ -58,7 +58,7 @@ export const getWebAppData = () => {
     }
     return null;
   } catch (error) {
-    console.warn('Failed to get WebApp data:', error);
+    console.warn("Failed to get WebApp data:", error);
     return null;
   }
 };
@@ -72,7 +72,7 @@ export const showTelegramAlert = (message: string) => {
       alert(message); // fallback
     }
   } catch (error) {
-    console.warn('Failed to show Telegram alert:', error);
+    console.warn("Failed to show Telegram alert:", error);
     alert(message); // fallback
   }
 };
@@ -89,7 +89,7 @@ export const showTelegramConfirm = (message: string): Promise<boolean> => {
         resolve(confirm(message)); // fallback
       }
     } catch (error) {
-      console.warn('Failed to show Telegram confirm:', error);
+      console.warn("Failed to show Telegram confirm:", error);
       resolve(confirm(message)); // fallback
     }
   });
@@ -102,43 +102,45 @@ export const closeTelegramWebApp = () => {
       telegramWebApp.close();
     }
   } catch (error) {
-    console.warn('Failed to close Telegram WebApp:', error);
+    console.warn("Failed to close Telegram WebApp:", error);
   }
 };
 
 // Check if running in Telegram
 export const isInTelegram = () => {
   try {
-    return telegramWebApp && telegramWebApp.platform !== 'unknown';
+    return telegramWebApp && telegramWebApp.platform !== "unknown";
   } catch {
     return false;
   }
 };
 
 // Haptic feedback
-export const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'light') => {
+export const triggerHapticFeedback = (
+  type: "light" | "medium" | "heavy" | "rigid" | "soft" = "light",
+) => {
   try {
     if (telegramWebApp?.HapticFeedback) {
       switch (type) {
-        case 'light':
-          telegramWebApp.HapticFeedback.impactOccurred('light');
+        case "light":
+          telegramWebApp.HapticFeedback.impactOccurred("light");
           break;
-        case 'medium':
-          telegramWebApp.HapticFeedback.impactOccurred('medium');
+        case "medium":
+          telegramWebApp.HapticFeedback.impactOccurred("medium");
           break;
-        case 'heavy':
-          telegramWebApp.HapticFeedback.impactOccurred('heavy');
+        case "heavy":
+          telegramWebApp.HapticFeedback.impactOccurred("heavy");
           break;
-        case 'rigid':
-          telegramWebApp.HapticFeedback.impactOccurred('rigid');
+        case "rigid":
+          telegramWebApp.HapticFeedback.impactOccurred("rigid");
           break;
-        case 'soft':
-          telegramWebApp.HapticFeedback.impactOccurred('soft');
+        case "soft":
+          telegramWebApp.HapticFeedback.impactOccurred("soft");
           break;
       }
     }
   } catch (error) {
-    console.warn('Haptic feedback not supported:', error);
+    console.warn("Haptic feedback not supported:", error);
   }
 };
 
@@ -147,13 +149,15 @@ export const shareUrl = (url: string, text?: string) => {
   try {
     if (telegramWebApp) {
       const shareText = text ? `${text}\n${url}` : url;
-      telegramWebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`);
+      telegramWebApp.openTelegramLink(
+        `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`,
+      );
     } else {
       // Fallback to clipboard
       navigator.clipboard?.writeText(url);
     }
   } catch (error) {
-    console.warn('Failed to share URL:', error);
+    console.warn("Failed to share URL:", error);
     // Fallback to clipboard
     navigator.clipboard?.writeText(url);
   }
@@ -165,11 +169,11 @@ export const openExternalLink = (url: string) => {
     if (telegramWebApp) {
       telegramWebApp.openLink(url);
     } else {
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
   } catch (error) {
-    console.warn('Failed to open external link:', error);
-    window.open(url, '_blank');
+    console.warn("Failed to open external link:", error);
+    window.open(url, "_blank");
   }
 };
 
@@ -178,14 +182,14 @@ export const setTelegramTheme = (isDarkMode: boolean) => {
   try {
     if (telegramWebApp) {
       if (isDarkMode) {
-        telegramWebApp.setBackgroundColor('#111827'); // gray-900
-        telegramWebApp.setHeaderColor('#1f2937'); // gray-800
+        telegramWebApp.setBackgroundColor("#111827"); // gray-900
+        telegramWebApp.setHeaderColor("#1f2937"); // gray-800
       } else {
-        telegramWebApp.setBackgroundColor('#f9fafb'); // gray-50
-        telegramWebApp.setHeaderColor('#008080'); // teal
+        telegramWebApp.setBackgroundColor("#f9fafb"); // gray-50
+        telegramWebApp.setHeaderColor("#008080"); // teal
       }
     }
   } catch (error) {
-    console.warn('Failed to set Telegram theme:', error);
+    console.warn("Failed to set Telegram theme:", error);
   }
 };
