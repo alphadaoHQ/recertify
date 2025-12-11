@@ -15,7 +15,7 @@ export function Header({ isDarkMode, toggleTheme }: HeaderProps) {
           : "bg-white/95 border-purple-200/50 shadow-md shadow-purple-50"
       }`}
     >
-      <div className="flex items-center justify-between max-w-md mx-auto w-full">
+      <div className="flex items-center justify-between max-w-md mx-auto w-full border-rounded-sm">
         {/* Logo and Title */}
         <div className="flex items-center gap-2 sm:gap-3 group min-w-0">
           <div className="relative shrink-0">

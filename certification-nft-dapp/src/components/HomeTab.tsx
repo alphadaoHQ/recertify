@@ -96,7 +96,7 @@ export function HomeTab({
               isDarkMode ? "text-[#b8b8d9]" : "text-[#444]"
             }`}
           >
-            Transform your Web3 journey with <strong>ALPHA DAO</strong> — your
+            Transform your Web3 journey with <strong>ALPHA DAO</strong> your
             gateway to blockchain mastery. Learn decentralized technologies,
             earn verified{" "}
             <span className="text-purple-600 font-semibold">
@@ -560,133 +560,7 @@ export function HomeTab({
         </div>
       </section>
 
-      {/* Featured Certificates Carousel */}
-      {/* Featured Certificates Carousel */}
-      <section className="mb-16">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h2
-            className={`text-3xl sm:text-4xl font-extrabold mb-4 tracking-tight transition-colors duration-500 ${
-              isDarkMode ? "text-white" : "text-purple-950"
-            }`}
-          >
-            Featured Certificates
-          </h2>
-          <p
-            className={`text-base sm:text-lg max-w-2xl mx-auto transition-colors duration-500 ${
-              isDarkMode ? "text-black-300/80" : "text-white-900/70"
-            }`}
-          >
-            Showcase of elite Web3 achievements and verified digital credentials
-            earned by our community.
-          </p>
-        </div>
-
-        {/* Certificates Grid */}
-        <div className="grid grid-cols-1 gap-6">
-          {/* Featured Certificate 1 */}
-          <div
-            className={`relative overflow-hidden p-6 rounded-2xl border transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/20 ${
-              isDarkMode
-                ? "bg-gradient-to-br from-purple-950/80 to-purple-900/40 border-purple-900/60"
-                : "bg-gradient-to-br from-white to-purple-50 border-purple-200/60"
-            }`}
-          >
-            {/* Glow Accent */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-600/20 blur-3xl rounded-full pointer-events-none"></div>
-
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-700 to-purple-500 flex items-center justify-center shadow-md shadow-purple-900/30">
-                <Award className="w-7 h-7 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3
-                  className={`font-semibold text-lg mb-1 transition-colors duration-300 ${
-                    isDarkMode ? "text-white" : "text-purple-950"
-                  }`}
-                >
-                  Elite Blockchain Developer
-                </h3>
-                <p
-                  className={`text-xs sm:text-sm transition-colors duration-300 ${
-                    isDarkMode ? "text-purple-300/70" : "text-purple-800/70"
-                  }`}
-                >
-                  Certified: December 2024
-                </p>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center text-xs sm:text-sm mt-3">
-              <span
-                className={`font-mono tracking-tight transition-colors duration-300 ${
-                  isDarkMode ? "text-purple-400/70" : "text-purple-600/80"
-                }`}
-              >
-                ID: #1247
-              </span>
-              <span
-                className={`transition-colors duration-300 ${
-                  isDarkMode ? "text-purple-400/60" : "text-purple-800/70"
-                }`}
-              >
-                Owner: 0x...a8b2
-              </span>
-            </div>
-          </div>
-
-          {/* Featured Certificate 2 */}
-          <div
-            className={`relative overflow-hidden p-6 rounded-2xl border transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/20 ${
-              isDarkMode
-                ? "bg-gradient-to-br from-purple-950/80 to-purple-900/40 border-purple-900/60"
-                : "bg-gradient-to-br from-white to-purple-50 border-purple-200/60"
-            }`}
-          >
-            {/* Glow Accent */}
-            <div className="absolute -top-10 -left-10 w-32 h-32 bg-purple-500/20 blur-3xl rounded-full pointer-events-none"></div>
-
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-700 to-purple-500 flex items-center justify-center shadow-md shadow-purple-900/30">
-                <Shield className="w-7 h-7 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3
-                  className={`font-semibold text-lg mb-1 transition-colors duration-300 ${
-                    isDarkMode ? "text-white" : "text-purple-950"
-                  }`}
-                >
-                  DeFi Security Expert
-                </h3>
-                <p
-                  className={`text-xs sm:text-sm transition-colors duration-300 ${
-                    isDarkMode ? "text-purple-300/70" : "text-purple-800/70"
-                  }`}
-                >
-                  Certified: November 2024
-                </p>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center text-xs sm:text-sm mt-3">
-              <span
-                className={`font-mono tracking-tight transition-colors duration-300 ${
-                  isDarkMode ? "text-purple-400/70" : "text-purple-600/80"
-                }`}
-              >
-                ID: #1189
-              </span>
-              <span
-                className={`transition-colors duration-300 ${
-                  isDarkMode ? "text-purple-400/60" : "text-purple-800/70"
-                }`}
-              >
-                Owner: 0x...c4d5
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+      
     </div>
   );
 }
