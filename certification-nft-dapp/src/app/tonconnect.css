@@ -1,0 +1,29 @@
+/* TON Connect Button Purple Styling */
+[data-tc-connect-button-root] {
+  --tc-bg-color: #7c3aed !important;
+  --tc-bg-color-hover: #6d28d9 !important;
+  --tc-bg-color-active: #5b21b6 !important;
+  --tc-text-color: #ffffff !important;
+  --tc-border-radius: 12px !important;
+  --tc-box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3) !important;
+}
+
+[data-tc-connect-button-root]:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4) !important;
+}
+
+/* Connected state styling */
+[data-tc-dropdown-button-root] {
+  --tc-bg-color: #7c3aed !important;
+  --tc-bg-color-hover: #6d28d9 !important;
+  --tc-text-color: #ffffff !important;
+  --tc-border-radius: 12px !important;
+}
+
+/* Dropdown menu styling */
+[data-tc-dropdown-root] {
+  --tc-bg-color: #1e1b4b !important;
+  --tc-border-color: #7c3aed !important;
+  --tc-text-color: #ffffff !important;
+}
