@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tact-lang/tact/main/src/config/configSchema.json",
+  "projects": [
+    {
+      "name": "NftCollection",
+      "path": "contracts/NftCollection.tact",
+      "output": "build\\NftCollection",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "CertificationItem", 
+      "path": "contracts/CertificationItem.tact", 
+      "output": "build\\CertificationItem",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    }
+  ]
+}
