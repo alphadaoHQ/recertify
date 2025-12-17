@@ -3,7 +3,10 @@ temp
 build
 dist
 .DS_Store
+.env
+.env.*
 package.ts
+memonic.txt
 
 # VS Code
 .vscode/*
@@ -21,3 +24,6 @@ Session.vim
 .nvim/
 .emacs/
 .helix/
+
+# Logs and Temp
+*.log
