@@ -8,6 +8,13 @@ dist
 package.ts
 memonic.txt
 
+# allow typscript
+
+!build/** */.ts
+!build/** */.json
+
+
+
 # VS Code
 .vscode/*
 .history/
