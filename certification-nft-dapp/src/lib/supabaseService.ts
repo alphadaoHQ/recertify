@@ -12,25 +12,6 @@ export interface UserStats {
   last_checkin?: string; // ISO date
 }
 
-export interface AvatarAudit {
-  id: number;
-  user_address: string;
-  avatar_url: string;
-  method: string;
-  metadata: any;
-  created_at: string;
-}
-
-export interface TelegramUser {
-  id: number;
-  telegram_id: number;
-  username?: string;
-  first_name?: string;
-  last_name?: string;
-  created_at: string;
-  updated_at: string;
-}
-
 /**
  * Load user stats from Supabase, with localStorage fallback
  */
@@ -134,10 +115,7 @@ export function shouldResetCheckIn(lastCheckinDate?: string): boolean {
  * @param limit - Maximum number of entries to return
  * @param type - Leaderboard type: "daily" | "weekly" | "alltime" (currently all return all-time)
  */
-export async function getLeaderboard(
-  limit: number = 10,
-  type: "daily" | "weekly" | "alltime" = "alltime",
-) {
+export async function getLeaderboard(limit: number = 10, type: "daily" | "weekly" | "alltime" = "alltime") {
   try {
     const { data, error } = await supabase
       .from("user_stats")
@@ -152,54 +130,11 @@ export async function getLeaderboard(
 
     // TODO: Implement filtering by type (daily/weekly) based on created_at or points_earned_date
     // For now, all types return the same all-time leaderboard
-
+    
     return data || [];
   } catch (err) {
     console.warn("Failed to fetch leaderboard:", err);
     return [];
-  }
-}
-
-/**
- * Get user's rank in the leaderboard
- * @param userAddress - User's address
- * @param type - Leaderboard type (currently all return all-time)
- * @returns Rank number (1-based) or null if user not found
- */
-export async function getUserRank(
-  userAddress: string,
-  type: "daily" | "weekly" | "alltime" = "alltime",
-): Promise<number | null> {
-  try {
-    // Get user's points
-    const { data: userData, error: userError } = await supabase
-      .from("user_stats")
-      .select("points")
-      .eq("user_address", userAddress)
-      .single();
-
-    if (userError || !userData) {
-      return null;
-    }
-
-    const userPoints = userData.points || 0;
-
-    // Count users with higher points
-    const { count, error: countError } = await supabase
-      .from("user_stats")
-      .select("*", { count: "exact", head: true })
-      .gt("points", userPoints);
-
-    if (countError) {
-      console.warn("Supabase getUserRank count error:", countError);
-      return null;
-    }
-
-    // Rank is count of higher scores + 1
-    return (count || 0) + 1;
-  } catch (err) {
-    console.warn("Failed to get user rank:", err);
-    return null;
   }
 }
 
@@ -319,7 +254,7 @@ export async function getOrCreateReferralCode(
 
     while (attempts < maxAttempts) {
       const candidateCode = generateReferralCode();
-
+      
       // Check if code already exists
       const { data: existingCode } = await supabase
         .from("user_stats")
@@ -340,16 +275,18 @@ export async function getOrCreateReferralCode(
     }
 
     // Update or insert user with referral code
-    const { error } = await supabase.from("user_stats").upsert(
-      {
-        user_address: userAddress,
-        referral_code: newCode,
-        points: existingData ? undefined : 0,
-        daily_streak: existingData ? undefined : 0,
-        claimed_task_ids: existingData ? undefined : [],
-      },
-      { onConflict: "user_address" },
-    );
+    const { error } = await supabase
+      .from("user_stats")
+      .upsert(
+        {
+          user_address: userAddress,
+          referral_code: newCode,
+          points: existingData ? undefined : 0,
+          daily_streak: existingData ? undefined : 0,
+          claimed_task_ids: existingData ? undefined : [],
+        },
+        { onConflict: "user_address" },
+      );
 
     if (error) {
       console.warn("Failed to save referral code:", error);
@@ -410,172 +347,5 @@ export async function incrementReferralCount(
   } catch (err) {
     console.error("incrementReferralCount error:", err);
     return false;
-  }
-}
-
-/**
- * Get paginated avatar audit records for a specific user
- */
-export async function getAvatarAuditPaginated(
-  userAddress: string,
-  page: number = 1,
-  pageSize: number = 20,
-): Promise<{
-  data: AvatarAudit[];
-  total: number;
-  page: number;
-  pageSize: number;
-}> {
-  try {
-    const offset = (page - 1) * pageSize;
-
-    // Get data
-    const { data, error } = await supabase
-      .from("avatar_audit")
-      .select("*")
-      .eq("user_address", userAddress)
-      .order("created_at", { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (error) {
-      console.warn("Supabase getAvatarAuditPaginated error:", error);
-      return { data: [], total: 0, page, pageSize };
-    }
-
-    // Get total count
-    const { count, error: countError } = await supabase
-      .from("avatar_audit")
-      .select("*", { count: "exact", head: true })
-      .eq("user_address", userAddress);
-
-    if (countError) {
-      console.warn("Supabase getAvatarAuditPaginated count error:", countError);
-    }
-
-    return {
-      data: data || [],
-      total: count || 0,
-      page,
-      pageSize,
-    };
-  } catch (err) {
-    console.warn("Failed to get avatar audit paginated:", err);
-    return { data: [], total: 0, page, pageSize };
-  }
-}
-
-/**
- * Get paginated avatar audit records for all users (admin only)
- */
-export async function getAllAvatarAuditsPaginated(
-  page: number = 1,
-  pageSize: number = 20,
-): Promise<{
-  data: AvatarAudit[];
-  total: number;
-  page: number;
-  pageSize: number;
-}> {
-  try {
-    const offset = (page - 1) * pageSize;
-
-    // Get data
-    const { data, error } = await supabase
-      .from("avatar_audit")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (error) {
-      console.warn("Supabase getAllAvatarAuditsPaginated error:", error);
-      return { data: [], total: 0, page, pageSize };
-    }
-
-    // Get total count
-    const { count, error: countError } = await supabase
-      .from("avatar_audit")
-      .select("*", { count: "exact", head: true });
-
-    if (countError) {
-      console.warn(
-        "Supabase getAllAvatarAuditsPaginated count error:",
-        countError,
-      );
-    }
-
-    return {
-      data: data || [],
-      total: count || 0,
-      page,
-      pageSize,
-    };
-  } catch (err) {
-    console.warn("Failed to get all avatar audits paginated:", err);
-    return { data: [], total: 0, page, pageSize };
-  }
-}
-
-/**
- * Get or create a Telegram user
- */
-export async function getOrCreateTelegramUser(
-  telegramId: number,
-  username?: string,
-  firstName?: string,
-  lastName?: string,
-): Promise<TelegramUser | null> {
-  try {
-    // Check if user exists
-    const { data: existing } = await supabase
-      .from("telegram_users")
-      .select("*")
-      .eq("telegram_id", telegramId)
-      .single();
-
-    if (existing) {
-      // Update if info changed
-      if (
-        existing.username !== username ||
-        existing.first_name !== firstName ||
-        existing.last_name !== lastName
-      ) {
-        const { error } = await supabase
-          .from("telegram_users")
-          .update({
-            username,
-            first_name: firstName,
-            last_name: lastName,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("telegram_id", telegramId);
-
-        if (error) {
-          console.warn("Failed to update Telegram user:", error);
-        }
-      }
-      return existing;
-    }
-
-    // Create new user
-    const { data, error } = await supabase
-      .from("telegram_users")
-      .insert({
-        telegram_id: telegramId,
-        username,
-        first_name: firstName,
-        last_name: lastName,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Failed to create Telegram user:", error);
-      return null;
-    }
-
-    return data;
-  } catch (err) {
-    console.error("getOrCreateTelegramUser error:", err);
-    return null;
   }
 }
