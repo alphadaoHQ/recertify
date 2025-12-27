@@ -234,7 +234,7 @@ export default function Home() {
           )}
 
           {activeTab === "rewards" && (
-            <RewardsTab userAddress={userAddress} isDarkMode={isDarkMode} />
+            <RewardsTab userAddress={userAddress} />
           )}
         </div>
       </main>
