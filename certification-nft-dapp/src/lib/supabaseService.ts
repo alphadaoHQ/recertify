@@ -350,3 +350,186 @@ export async function incrementReferralCount(
     return false;
   }
 }
+
+/**
+ * Get paginated avatar audits for all users (admin only)
+ */
+export async function getAllAvatarAuditsPaginated(page: number = 1, pageSize: number = 20) {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Get total count
+    const { count } = await supabase
+      .from("avatar_audit")
+      .select("*", { count: "exact", head: true });
+
+    // Get paginated data
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.warn("Supabase getAllAvatarAuditsPaginated error:", error);
+      return { data: [], total: 0, page, pageSize, totalPages: 0 };
+    }
+
+    const totalPages = Math.ceil((count || 0) / pageSize);
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      pageSize,
+      totalPages,
+    };
+  } catch (err) {
+    console.warn("Failed to fetch all avatar audits:", err);
+    return { data: [], total: 0, page, pageSize, totalPages: 0 };
+  }
+}
+
+/**
+ * Get paginated avatar audits for a specific user
+ */
+export async function getAvatarAuditPaginated(userAddress: string, page: number = 1, pageSize: number = 20) {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Get total count for user
+    const { count } = await supabase
+      .from("avatar_audit")
+      .select("*", { count: "exact", head: true })
+      .eq("user_address", userAddress);
+
+    // Get paginated data for user
+    const { data, error } = await supabase
+      .from("avatar_audit")
+      .select("*")
+      .eq("user_address", userAddress)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.warn("Supabase getAvatarAuditPaginated error:", error);
+      return { data: [], total: 0, page, pageSize, totalPages: 0 };
+    }
+
+    const totalPages = Math.ceil((count || 0) / pageSize);
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      pageSize,
+      totalPages,
+    };
+  } catch (err) {
+    console.warn("Failed to fetch user avatar audits:", err);
+    return { data: [], total: 0, page, pageSize, totalPages: 0 };
+  }
+}
+
+/**
+ * Get user's rank in leaderboard
+ */
+export async function getUserRank(userAddress: string, type: "daily" | "weekly" | "alltime" = "alltime") {
+  try {
+    // For now, all types return all-time ranking
+    // TODO: Implement filtering by time period when date tracking is added
+
+    const { data, error } = await supabase
+      .from("user_stats")
+      .select("user_address, points")
+      .order("points", { ascending: false });
+
+    if (error) {
+      console.warn("Supabase getUserRank error:", error);
+      return null;
+    }
+
+    const userIndex = data?.findIndex(user => user.user_address === userAddress);
+    if (userIndex === undefined || userIndex === -1) {
+      return null;
+    }
+
+    const rank = userIndex + 1;
+    const userData = data[userIndex];
+
+    return {
+      rank,
+      points: userData.points,
+      user_address: userData.user_address,
+    };
+  } catch (err) {
+    console.warn("Failed to get user rank:", err);
+    return null;
+  }
+}
+
+/**
+ * Get or create a Telegram user record
+ */
+export async function getOrCreateTelegramUser(
+  telegramId: number,
+  username?: string,
+  firstName?: string,
+  lastName?: string,
+) {
+  try {
+    // Try to find existing user
+    const { data: existingUser, error: findError } = await supabase
+      .from("telegram_users")
+      .select("*")
+      .eq("telegram_id", telegramId)
+      .single();
+
+    if (findError && findError.code !== "PGRST116") {
+      console.warn("Error finding Telegram user:", findError);
+    }
+
+    if (existingUser) {
+      // Update user info if provided
+      if (username !== undefined || firstName !== undefined || lastName !== undefined) {
+        const updateData: any = { updated_at: new Date().toISOString() };
+        if (username !== undefined) updateData.username = username;
+        if (firstName !== undefined) updateData.first_name = firstName;
+        if (lastName !== undefined) updateData.last_name = lastName;
+
+        const { error: updateError } = await supabase
+          .from("telegram_users")
+          .update(updateData)
+          .eq("telegram_id", telegramId);
+
+        if (updateError) {
+          console.warn("Error updating Telegram user:", updateError);
+        }
+      }
+
+      return existingUser;
+    }
+
+    // Create new user
+    const { data: newUser, error: createError } = await supabase
+      .from("telegram_users")
+      .insert({
+        telegram_id: telegramId,
+        username,
+        first_name: firstName,
+        last_name: lastName,
+      })
+      .select()
+      .single();
+
+    if (createError) {
+      console.warn("Error creating Telegram user:", createError);
+      return null;
+    }
+
+    return newUser;
+  } catch (err) {
+    console.error("getOrCreateTelegramUser error:", err);
+    return null;
+  }
+}
