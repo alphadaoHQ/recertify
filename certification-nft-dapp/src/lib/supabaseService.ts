@@ -9,6 +9,7 @@ export interface UserStats {
   achievements?: string[];
   referral_count?: number;
   referral_code?: string;
+  telegram_id?: number;
   last_checkin?: string; // ISO date
 }
 
@@ -130,7 +131,7 @@ export async function getLeaderboard(limit: number = 10, type: "daily" | "weekly
 
     // TODO: Implement filtering by type (daily/weekly) based on created_at or points_earned_date
     // For now, all types return the same all-time leaderboard
-    
+
     return data || [];
   } catch (err) {
     console.warn("Failed to fetch leaderboard:", err);
@@ -254,7 +255,7 @@ export async function getOrCreateReferralCode(
 
     while (attempts < maxAttempts) {
       const candidateCode = generateReferralCode();
-      
+
       // Check if code already exists
       const { data: existingCode } = await supabase
         .from("user_stats")

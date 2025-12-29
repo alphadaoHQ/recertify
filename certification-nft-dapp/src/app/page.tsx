@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { GalleryTab } from "@/components/GalleryTab";
 import { HomeTab } from "@/components/HomeTab";
+import { QuizTab } from "@/components/QuizTab";
 import { TabBar } from "@/components/TabBar";
 import { TasksTab } from "@/components/TasksTabRealtime";
 import { WelcomeModal } from "@/components/WelcomeModal";
@@ -103,7 +104,7 @@ export default function Home() {
         }
       });
       localStorage.removeItem("tonconnect");
-    } catch (_e) {}
+    } catch (_e) { }
     setTimeout(() => location.reload(), 150);
   };
 
@@ -174,9 +175,8 @@ export default function Home() {
 
   return (
     <div
-      className={`min-h-screen antialiased transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
-      } max-w-md mx-auto relative overflow-y-auto`}
+      className={`min-h-screen antialiased transition-colors duration-300 ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+        } max-w-md mx-auto relative overflow-y-auto`}
     >
       <WelcomeModal
         isDarkMode={isDarkMode}
@@ -218,19 +218,11 @@ export default function Home() {
           )}
 
           {activeTab === "quiz" && (
-            <div className="text-center py-8">
-              <h2
-                className={`text-2xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
-              >
-                Quiz Coming Soon
-              </h2>
-              <p
-                className={`text-lg ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-              >
-                Interactive quizzes on certification topics will be available
-                here.
-              </p>
-            </div>
+            <QuizTab
+              isDarkMode={isDarkMode}
+              userAddress={userAddress}
+              telegramUser={telegramUser}
+            />
           )}
 
           {activeTab === "rewards" && (

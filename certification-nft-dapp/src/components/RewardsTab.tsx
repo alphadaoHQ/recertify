@@ -5,14 +5,10 @@ import Leaderboard from "@/components/Leaderboard";
 
 interface RewardsTabProps {
   userAddress?: string | null;
+  isDarkMode: boolean;
 }
 
-function shortAddr(addr: string | null | undefined) {
-  if (!addr) return "—";
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
-
-export default function RewardsTab({ userAddress }: RewardsTabProps) {
+export default function RewardsTab({ userAddress, isDarkMode }: RewardsTabProps) {
   const [achievements, setAchievements] = useState<string[]>([]);
 
   useEffect(() => {
