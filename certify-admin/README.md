@@ -16,6 +16,10 @@ npm install
 
 3. Copy environment variables (if needed):
 ```bash
+# Example .env for client-only admin app
+# Set the deployed contract address so the UI can read state and build transactions
+NEXT_PUBLIC_CONTRACT_ADDRESS=EQCxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 cp ../.env.local .env.local  # adjust as needed for your environment
 ```
 

@@ -3,6 +3,11 @@
 import { useTonAddress } from "@tonconnect/ui-react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+const MintForm = dynamic(() => import("@/components/MintForm"), { ssr: false });
+const AddAdminForm = dynamic(() => import("@/components/AddAdminForm"), { ssr: false });
+const ContractState = dynamic(() => import("@/components/ContractState"), { ssr: false });
 
 const _manifestUrl =
   "https://peach-fast-clam-38.mypinata.cloud/ipfs/bafkreidsqkapogy6yric4zskh76r5ldsdrstwrlnvsidb2fzi2tflqzywa";
@@ -13,8 +18,7 @@ function AdminContent() {
   const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    // Check admin status - this would need proper implementation
-    // For now, just show the interface
+    // In future we can call a server or on-chain getter to determine admin status.
     setIsAdmin(true);
     setIsOwner(true);
   }, []);
@@ -32,37 +36,41 @@ function AdminContent() {
           <div className="space-y-6">
             <div className="bg-gray-800 p-6 rounded-lg">
               <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
-              <p className="text-gray-300 mb-4">
-                Manage certificates and permissions
-              </p>
+              <p className="text-gray-300 mb-4">Manage certificates and permissions</p>
 
-              {/* Mint Form Placeholder */}
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-2">Mint New Certificate</h3>
-                <p className="text-gray-400">Mint form would go here</p>
+                <p className="text-gray-400 mb-4">Use the form below to mint a certificate (wallet will ask for confirmation).</p>
+                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div>
+                    {/* Mint form component */}
+                    {/* @ts-ignore server-component */}
+                    <MintForm />
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-bold mb-2">Add Admin</h3>
+                    <p className="text-gray-400 mb-4">Promote an address to admin using the contract.</p>
+                    {/* @ts-ignore server-component */}
+                    <AddAdminForm />
+                  </div>
+                </div>
               </div>
 
-              {/* Add Admin Form Placeholder */}
               <div>
                 <h3 className="text-lg font-bold mb-2">Add Admin</h3>
-                <p className="text-gray-400">Add admin form would go here</p>
+                <p className="text-gray-400">Add admin form will be added here.</p>
               </div>
             </div>
 
-            {/* Contract State Placeholder */}
             <div className="bg-gray-800 p-6 rounded-lg">
-              <h2 className="text-xl font-bold mb-4">Contract State</h2>
-              <p className="text-gray-400">
-                Contract state information would go here
-              </p>
+              <ContractState />
             </div>
           </div>
         ) : (
           <div className="text-center py-12">
             <h3 className="text-lg font-bold mb-2">Admin Access Required</h3>
-            <p className="text-gray-400 mb-4">
-              Connect an admin wallet to access this section
-            </p>
+            <p className="text-gray-400 mb-4">Connect an admin wallet to access this section</p>
           </div>
         )}
       </div>
