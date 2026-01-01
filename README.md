@@ -13,6 +13,8 @@
 
 `npx blueprint build` or `yarn blueprint build`
 
+> Note: The admin panel has been moved out of `certification-nft-dapp` and is now in the `certify-admin/` folder so it can be hosted independently. See `certify-admin/README.md` for setup and run instructions.
+
 ### Test
 
 `npx blueprint test` or `yarn blueprint test`

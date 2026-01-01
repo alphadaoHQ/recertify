@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+> Note: The separate admin panel was moved to the repository root at `certify-admin/` to allow independent hosting. See `../certify-admin/README.md` for admin setup.
+
+
 First, run the development server:
 
 ```bash
