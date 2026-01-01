@@ -1,6 +1,6 @@
 import { beginCell, Address as TonAddress, toNano } from "@ton/core";
 import { TonClient } from "@ton/ton";
-import { CertificationNFT } from "../certification-nft-dapp/src/lib/contract/CertificationNFT";
+import { CertificationNFT } from "@/lib/contract/CertificationNFT";
 
 // Fallback constants; prefer NEXT_PUBLIC_* env vars in production
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "";
@@ -37,6 +37,39 @@ export class ContractService {
   constructor() {
     this.client = new TonClient({ endpoint: TESTNET_ENDPOINT });
     this.contractAddress = CONTRACT_ADDRESS ? TonAddress.parse(CONTRACT_ADDRESS) : null;
+  }
+
+  // Build a mint transaction for an arbitrary collection address
+  buildMintTransactionForCollection(collectionAddress: string, studentAddress: string) {
+    const body = beginCell().storeUint(OPCODES.MINT, 32).storeAddress(TonAddress.parse(studentAddress)).storeRef(beginCell().endCell()).endCell();
+    return {
+      validUntil: Math.floor(Date.now() / 1000) + TX_CONFIG.validUntil,
+      messages: [
+        {
+          address: collectionAddress,
+          amount: toNano(TX_CONFIG.mintValue).toString(),
+          payload: body.toBoc().toString("base64"),
+        },
+      ],
+    };
+  }
+
+  // Build a deploy transaction payload from provided init (code/data base64); returns the message that includes `init`.
+  buildDeployTransaction(initCodeBase64: string, initDataBase64: string, deployValue = "0.05") {
+    return {
+      validUntil: Math.floor(Date.now() / 1000) + TX_CONFIG.validUntil,
+      messages: [
+        {
+          // When deploying, the wallet should create a deploy message which includes `init` fields
+          address: "",
+          amount: toNano(deployValue).toString(),
+          init: {
+            code: initCodeBase64,
+            data: initDataBase64,
+          },
+        } as any,
+      ],
+    };
   }
 
   private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 3, baseDelay = 1000, maxDelay = 30000): Promise<T> {

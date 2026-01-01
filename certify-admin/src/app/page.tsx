@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 const MintForm = dynamic(() => import("@/components/MintForm"), { ssr: false });
 const AddAdminForm = dynamic(() => import("@/components/AddAdminForm"), { ssr: false });
 const ContractState = dynamic(() => import("@/components/ContractState"), { ssr: false });
+const DeployForm = dynamic(() => import("@/components/DeployForm"), { ssr: false });
 
 const _manifestUrl =
   "https://peach-fast-clam-38.mypinata.cloud/ipfs/bafkreidsqkapogy6yric4zskh76r5ldsdrstwrlnvsidb2fzi2tflqzywa";
@@ -41,7 +42,7 @@ function AdminContent() {
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-2">Mint New Certificate</h3>
                 <p className="text-gray-400 mb-4">Use the form below to mint a certificate (wallet will ask for confirmation).</p>
-                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
                   <div>
                     {/* Mint form component */}
                     {/* @ts-ignore server-component */}
@@ -53,6 +54,13 @@ function AdminContent() {
                     <p className="text-gray-400 mb-4">Promote an address to admin using the contract.</p>
                     {/* @ts-ignore server-component */}
                     <AddAdminForm />
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-bold mb-2">Deploy Collection</h3>
+                    <p className="text-gray-400 mb-4">Provide compiled collection code/data BOC to deploy a new collection.</p>
+                    {/* @ts-ignore server-component */}
+                    <DeployForm />
                   </div>
                 </div>
               </div>
