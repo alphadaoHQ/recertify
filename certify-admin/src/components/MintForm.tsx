@@ -26,6 +26,7 @@ export default function MintForm() {
     setMessage(null);
 
     try {
+      if (!contractService.getContractAddress()) throw new Error("CONTRACT_ADDRESS not configured. Set NEXT_PUBLIC_CONTRACT_ADDRESS in .env.local");
       const tx = contractService.buildMintTransaction(recipient);
       // sendTransaction is a helper provided by TonConnect UI to ask the wallet
       // to sign/send the messages created above.
@@ -58,10 +59,14 @@ export default function MintForm() {
           </button>
         )}
 
-        <button type="submit" disabled={loading} className="btn btn-primary">
+        <button type="submit" disabled={loading || !contractService.getContractAddress()} className="btn btn-primary">
           {loading ? "Sending..." : "Mint NFT"}
         </button>
       </div>
+
+      {!contractService.getContractAddress() && (
+        <p className="text-sm text-yellow-300">CONTRACT_ADDRESS is not configured. Set `NEXT_PUBLIC_CONTRACT_ADDRESS` in certify-admin/.env.local</p>
+      )}
 
       {message && <p className="text-sm text-gray-300">{message}</p>}
     </form>

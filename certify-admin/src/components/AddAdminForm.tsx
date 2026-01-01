@@ -25,6 +25,7 @@ export default function AddAdminForm() {
     setLoading(true);
     setMessage(null);
     try {
+      if (!contractService.getContractAddress()) throw new Error("CONTRACT_ADDRESS not configured. Set NEXT_PUBLIC_CONTRACT_ADDRESS in .env.local");
       const tx = contractService.buildAddAdminTransaction(adminAddress);
       await sendTransaction(tx.messages);
       setMessage("Add-admin transaction submitted. Check your wallet for confirmation.");
@@ -56,10 +57,14 @@ export default function AddAdminForm() {
           </button>
         )}
 
-        <button type="submit" disabled={loading} className="btn btn-primary">
+        <button type="submit" disabled={loading || !contractService.getContractAddress()} className="btn btn-primary">
           {loading ? "Sending..." : "Add Admin"}
         </button>
       </div>
+
+      {!contractService.getContractAddress() && (
+        <p className="text-sm text-yellow-300">CONTRACT_ADDRESS is not configured. Set `NEXT_PUBLIC_CONTRACT_ADDRESS` in certify-admin/.env.local</p>
+      )}
 
       {message && <p className="text-sm text-gray-300">{message}</p>}
     </form>

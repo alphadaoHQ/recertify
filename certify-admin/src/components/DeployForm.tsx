@@ -19,6 +19,7 @@ export default function DeployForm() {
 
     try {
       const tx = contractService.buildDeployTransaction(codeBoc, dataBoc, value);
+      if (!tx || !tx.messages) throw new Error("Failed to build deploy message");
       await sendTransaction(tx.messages);
       setMessage("Deploy message created. Wallet will ask to confirm deploy.");
     } catch (err) {
