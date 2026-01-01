@@ -16,6 +16,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import Header from "@/components/Header";
+
 export default function RootLayout({
   children,
 }: {
@@ -26,7 +28,8 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gray-900 text-white min-h-screen`}
       >
-        {children}
+        <Header />
+        <main className="mt-6">{children}</main>
       </body>
     </html>
   );
