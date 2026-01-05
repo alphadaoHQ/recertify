@@ -7,6 +7,7 @@ import { HomeTab } from "@/components/HomeTab";
 import { QuizTab } from "@/components/QuizTab";
 import { TabBar } from "@/components/TabBar";
 import { TasksTab } from "@/components/TasksTabRealtime";
+import { WalletGate } from "@/components/WalletGate";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { useContractState } from "@/hooks/useContractState";
 import {
@@ -197,36 +198,53 @@ export default function Home() {
               handleMarkAsRead={handleMarkAsRead}
               activeTab={activeTab}
               toggleTheme={toggleTheme}
+              userAddress={userAddress}
             />
           )}
 
           {activeTab === "tasks" && (
-            <TasksTab
-              isDarkMode={isDarkMode}
-              isTransitioning={isTransitioning}
-              previousTab={previousTab}
-              userAddress={userAddress}
-            />
+            userAddress ? (
+              <TasksTab
+                isDarkMode={isDarkMode}
+                isTransitioning={isTransitioning}
+                previousTab={previousTab}
+                userAddress={userAddress}
+              />
+            ) : (
+              <WalletGate isDarkMode={isDarkMode} tabName="Tasks" />
+            )
           )}
 
           {activeTab === "gallery" && (
-            <GalleryTab
-              isDarkMode={isDarkMode}
-              isTransitioning={isTransitioning}
-              previousTab={previousTab}
-            />
+            userAddress ? (
+              <GalleryTab
+                isDarkMode={isDarkMode}
+                isTransitioning={isTransitioning}
+                previousTab={previousTab}
+              />
+            ) : (
+              <WalletGate isDarkMode={isDarkMode} tabName="Gallery" />
+            )
           )}
 
           {activeTab === "quiz" && (
-            <QuizTab
-              isDarkMode={isDarkMode}
-              userAddress={userAddress}
-              telegramUser={telegramUser}
-            />
+            userAddress ? (
+              <QuizTab
+                isDarkMode={isDarkMode}
+                userAddress={userAddress}
+                telegramUser={telegramUser}
+              />
+            ) : (
+              <WalletGate isDarkMode={isDarkMode} tabName="Quiz" />
+            )
           )}
 
           {activeTab === "rewards" && (
-            <RewardsTab userAddress={userAddress} />
+            userAddress ? (
+              <RewardsTab userAddress={userAddress} isDarkMode={isDarkMode} />
+            ) : (
+              <WalletGate isDarkMode={isDarkMode} tabName="Rewards" />
+            )
           )}
         </div>
       </main>

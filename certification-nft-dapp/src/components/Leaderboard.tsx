@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLeaderboard, getTopReferrers, getOrCreateReferralCode } from "@/lib/supabaseService";
-import { generateTelegramReferralLink } from "@/lib/externalLinks";
+import { getLeaderboard, getTopReferrers } from "@/lib/supabaseService";
 
 interface LeaderboardEntry {
     user_address: string;
     points?: number;
     referral_count?: number;
-    referral_code?: string;
 }
 
 export default function Leaderboard() {
@@ -29,19 +27,7 @@ export default function Leaderboard() {
             } else {
                 result = await getTopReferrers(20);
             }
-
-            // Ensure all entries have referral codes (generate if missing)
-            const entriesWithCodes = await Promise.all(
-                result.map(async (entry) => {
-                    if (!entry.referral_code) {
-                        const code = await getOrCreateReferralCode(entry.user_address);
-                        return { ...entry, referral_code: code || undefined };
-                    }
-                    return entry;
-                })
-            );
-
-            setData(entriesWithCodes);
+            setData(result);
         } catch (error) {
             console.error("Failed to load leaderboard:", error);
         } finally {
@@ -78,7 +64,6 @@ export default function Leaderboard() {
                         : "bg-gray-800 text-gray-400 hover:bg-gray-700"
                         }`}
                 >
-
                     Top Referrers
                 </button>
             </div>
@@ -90,9 +75,6 @@ export default function Leaderboard() {
                         <tr className="border-b border-gray-700 text-gray-400 uppercase text-sm">
                             <th className="p-4">Rank</th>
                             <th className="p-4">User</th>
-                            {activeTab === "referrals" && (
-                                <th className="p-4">Referral Link</th>
-                            )}
                             <th className="p-4 text-right">
                                 {activeTab === "points" ? "Points" : "Referrals"}
                             </th>
@@ -101,71 +83,43 @@ export default function Leaderboard() {
                     <tbody className="divide-y divide-gray-800">
                         {loading ? (
                             <tr>
-                                <td colSpan={activeTab === "referrals" ? 4 : 3} className="p-8 text-center text-gray-500">
+                                <td colSpan={3} className="p-8 text-center text-gray-500">
                                     Loading...
                                 </td>
                             </tr>
                         ) : data.length === 0 ? (
                             <tr>
-                                <td colSpan={activeTab === "referrals" ? 4 : 3} className="p-8 text-center text-gray-500">
+                                <td colSpan={3} className="p-8 text-center text-gray-500">
                                     No data available yet.
                                 </td>
                             </tr>
                         ) : (
-                            data.map((entry, index) => {
-                                const referralLink = entry.referral_code
-                                    ? generateTelegramReferralLink(entry.referral_code)
-                                    : null;
-
-                                return (
-                                    <tr
-                                        key={entry.user_address}
-                                        className="hover:bg-gray-800/50 transition-colors"
-                                    >
-                                        <td className="p-4 font-medium">
-                                            {index + 1 === 1 ? (
-                                                <span className="text-yellow-400">🥇 1st</span>
-                                            ) : index + 1 === 2 ? (
-                                                <span className="text-gray-300">🥈 2nd</span>
-                                            ) : index + 1 === 3 ? (
-                                                <span className="text-amber-600">🥉 3rd</span>
-                                            ) : (
-                                                <span className="text-gray-500">#{index + 1}</span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 font-mono text-blue-300">
-                                            {truncateAddress(entry.user_address)}
-                                        </td>
-                                        {activeTab === "referrals" && (
-                                            <td className="p-4">
-                                                {referralLink ? (
-                                                    <a
-                                                        href={referralLink}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-cyan-400 hover:text-cyan-300 hover:underline font-mono text-sm break-all"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            navigator.clipboard.writeText(referralLink);
-                                                            // You could add a toast notification here
-                                                            alert(`Referral link copied: ${referralLink}`);
-                                                        }}
-                                                    >
-                                                        {referralLink}
-                                                    </a>
-                                                ) : (
-                                                    <span className="text-gray-500 text-sm">—</span>
-                                                )}
-                                            </td>
+                            data.map((entry, index) => (
+                                <tr
+                                    key={entry.user_address}
+                                    className="hover:bg-gray-800/50 transition-colors"
+                                >
+                                    <td className="p-4 font-medium">
+                                        {index + 1 === 1 ? (
+                                            <span className="text-yellow-400">🥇 1st</span>
+                                        ) : index + 1 === 2 ? (
+                                            <span className="text-gray-300">🥈 2nd</span>
+                                        ) : index + 1 === 3 ? (
+                                            <span className="text-amber-600">🥉 3rd</span>
+                                        ) : (
+                                            <span className="text-gray-500">#{index + 1}</span>
                                         )}
-                                        <td className="p-4 text-right font-bold text-white">
-                                            {activeTab === "points"
-                                                ? entry.points?.toLocaleString() || 0
-                                                : entry.referral_count?.toLocaleString() || 0}
-                                        </td>
-                                    </tr>
-                                );
-                            })
+                                    </td>
+                                    <td className="p-4 font-mono text-blue-300">
+                                        {truncateAddress(entry.user_address)}
+                                    </td>
+                                    <td className="p-4 text-right font-bold text-white">
+                                        {activeTab === "points"
+                                            ? entry.points?.toLocaleString() || 0
+                                            : entry.referral_count?.toLocaleString() || 0}
+                                    </td>
+                                </tr>
+                            ))
                         )}
                     </tbody>
                 </table>
@@ -173,3 +127,4 @@ export default function Leaderboard() {
         </div>
     );
 }
+
