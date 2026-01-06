@@ -13,23 +13,21 @@ export function WelcomeModal({
 
   return (
     <div
-      className={`fixed inset-0 z-[60] flex items-center justify-center backdrop-blur-md transition-all duration-500 ease-in-out ${
-        isDarkMode ? "bg-black/95" : "bg-purple-950/90"
-      } ${showWelcomeModal ? "opacity-100" : "opacity-0"}`}
+      className={`fixed inset-0 z-[60] flex items-center justify-center backdrop-blur-md transition-all duration-500 ease-in-out ${isDarkMode ? "bg-black/95" : "bg-purple-950/90"
+        } ${showWelcomeModal ? "opacity-100" : "opacity-0"}`}
     >
       <div
-        className={`p-8 rounded-3xl max-w-md mx-4 text-center border shadow-[0_0_25px_rgba(88,28,135,0.45)] transition-all duration-500 transform ${
-          isDarkMode
+        className={`p-8 rounded-3xl max-w-md mx-4 text-center border shadow-[0_0_25px_rgba(88,28,135,0.45)] transition-all duration-500 transform ${isDarkMode
             ? "bg-gray-900/90 border-purple-500/50 backdrop-blur-sm"
             : "bg-white/90 border-purple-950/20 backdrop-blur-sm"
-        } ${showWelcomeModal ? "scale-100 opacity-100" : "scale-95 opacity-0"} animate-fadeIn`}
+          } ${showWelcomeModal ? "scale-100 opacity-100" : "scale-95 opacity-0"} animate-fadeIn`}
       >
         <div className="mb-6">
           <div
             className={`w-20 h-20 bg-gradient-to-r from-purple-700 to-purple-950 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_25px_rgba(168,85,247,0.55)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(168,85,247,0.85)] hover:rotate-6`}
           >
             <img
-              src="/Daologo.png"
+              src="/Recertify.png"
               alt="Alpha DAO logo"
               className="w-18 h-18 animate-spinSlow"
             />
@@ -42,9 +40,8 @@ export function WelcomeModal({
           </h2>
 
           <p
-            className={`text-base leading-relaxed ${
-              isDarkMode ? "text-black-200" : "text-black-800"
-            } animate-fadeIn delay-200`}
+            className={`text-base leading-relaxed ${isDarkMode ? "text-black-200" : "text-black-800"
+              } animate-fadeIn delay-200`}
           >
             Join ALPHA DAO - the premier Web3 education platform empowering the
             next billion users. Complete the learning journey and earn exclusive
