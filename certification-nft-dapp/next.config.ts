@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  // Ensure Next infers the correct workspace root for output tracing
+  outputFileTracingRoot: path.join(__dirname, '..'),
   // Disable caching for Telegram miniapp compatibility
   async headers() {
     return [

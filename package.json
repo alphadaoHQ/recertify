@@ -5,6 +5,7 @@
         "bp": "blueprint",
         "start": "blueprint run",
         "build": "blueprint build",
+        "vercel-build": "cd certification-nft-dapp && npm run build",
         "test": "jest --verbose",
         "release": "blueprint pack && npm publish --access public"
     },
