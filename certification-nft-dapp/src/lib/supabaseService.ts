@@ -350,3 +350,149 @@ export async function incrementReferralCount(
     return false;
   }
 }
+
+/**
+ * Paginated retrieval of all avatar audits (admin-safe)
+ */
+export async function getAllAvatarAuditsPaginated(
+  page: number = 1,
+  pageSize: number = 20,
+) {
+  try {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await supabase
+      .from("avatar_audit")
+      .select("*, metadata", { count: "exact" })
+      .order("id", { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      console.warn("getAllAvatarAuditsPaginated error:", error);
+      return { items: [], total: 0, page, pageSize };
+    }
+
+    return { items: data || [], total: count || 0, page, pageSize };
+  } catch (err) {
+    console.error("getAllAvatarAuditsPaginated error:", err);
+    return { items: [], total: 0, page, pageSize };
+  }
+}
+
+/**
+ * Paginated retrieval for a single user's avatar audits
+ */
+export async function getAvatarAuditPaginated(
+  userAddress: string,
+  page: number = 1,
+  pageSize: number = 20,
+) {
+  try {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await supabase
+      .from("avatar_audit")
+      .select("*, metadata", { count: "exact" })
+      .eq("user_address", userAddress)
+      .order("id", { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      console.warn("getAvatarAuditPaginated error:", error);
+      return { items: [], total: 0, page, pageSize };
+    }
+
+    return { items: data || [], total: count || 0, page, pageSize };
+  } catch (err) {
+    console.error("getAvatarAuditPaginated error:", err);
+    return { items: [], total: 0, page, pageSize };
+  }
+}
+
+/**
+ * Return the 1-based rank of a user by points (higher points = better rank)
+ */
+export async function getUserRank(userAddress: string, type: "daily" | "weekly" | "alltime" = "alltime"): Promise<number | null> {
+  try {
+    // NOTE: 'type' parameter is currently unused and always returns an all-time rank.
+    // Future improvement: filter by date range for 'daily'/'weekly' types.
+    const { data: userRow, error: userErr } = await supabase
+      .from("user_stats")
+      .select("points")
+      .eq("user_address", userAddress)
+      .single();
+
+    if (userErr || !userRow) return null;
+
+    const userPoints = typeof userRow.points === "number" ? userRow.points : 0;
+
+    // Count users with more points than this user
+    const { count, error } = await supabase
+      .from("user_stats")
+      .select("user_address", { count: "exact" })
+      .gt("points", userPoints);
+
+    if (error) {
+      console.warn("getUserRank error:", error);
+      return null;
+    }
+
+    const higherCount = count || 0;
+    return higherCount + 1; // rank is number of users with higher points + 1
+  } catch (err) {
+    console.error("getUserRank error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get or create a Telegram user row in `telegram_users` table
+ */
+export async function getOrCreateTelegramUser(
+  telegramId: number,
+  username?: string,
+  first_name?: string,
+  last_name?: string,
+) {
+  try {
+    const { data, error } = await supabase
+      .from("telegram_users")
+      .select("*")
+      .eq("telegram_id", telegramId)
+      .single();
+
+    if (error && (error as any).code !== "PGRST116") {
+      // If other error, log and return null
+      console.warn("getOrCreateTelegramUser select error:", error);
+      return null;
+    }
+
+    if (data) return data;
+
+    // Insert a new Telegram user
+    const insertPayload: any = {
+      telegram_id: telegramId,
+      username: username || null,
+      first_name: first_name || null,
+      last_name: last_name || null,
+    };
+
+    const { data: inserted, error: insertErr } = await supabase
+      .from("telegram_users")
+      .insert(insertPayload)
+      .select()
+      .single();
+
+    if (insertErr) {
+      console.warn("getOrCreateTelegramUser insert error:", insertErr);
+      return null;
+    }
+
+    return inserted;
+  } catch (err) {
+    console.error("getOrCreateTelegramUser error:", err);
+    return null;
+  }
+}
