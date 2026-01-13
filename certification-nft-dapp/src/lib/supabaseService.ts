@@ -496,3 +496,148 @@ export async function getOrCreateTelegramUser(
     return null;
   }
 }
+
+// ============================================================
+// POINT CLAIMS & USER REWARDS
+// ============================================================
+
+export interface PointClaim {
+  id: string;
+  user_address: string;
+  claim_type: "task" | "quiz" | "daily_checkin" | "referral" | "achievement";
+  claim_source_id: string;
+  points_earned: number;
+  bonus_multiplier: number;
+  metadata?: Record<string, any>;
+  created_at: string;
+}
+
+export interface UserReward {
+  id: string;
+  user_address: string;
+  reward_type: "badge" | "achievement" | "milestone";
+  reward_id: string;
+  reward_name: string;
+  reward_description?: string;
+  icon_url?: string;
+  earned_at: string;
+}
+
+/**
+ * Record a point claim to the database for audit trail
+ */
+export async function recordPointClaim(
+  userAddress: string,
+  claimType: PointClaim["claim_type"],
+  claimSourceId: string,
+  pointsEarned: number,
+  bonusMultiplier: number = 1.0,
+  metadata?: Record<string, any>
+): Promise<boolean> {
+  try {
+    const { error } = await supabase.from("point_claims").insert({
+      user_address: userAddress,
+      claim_type: claimType,
+      claim_source_id: claimSourceId,
+      points_earned: pointsEarned,
+      bonus_multiplier: bonusMultiplier,
+      metadata: metadata || {},
+    });
+
+    if (error) {
+      console.warn("Failed to record point claim:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("recordPointClaim error:", err);
+    return false;
+  }
+}
+
+/**
+ * Get point claim history for a user
+ */
+export async function getPointClaimHistory(
+  userAddress: string,
+  limit: number = 50
+): Promise<PointClaim[]> {
+  try {
+    const { data, error } = await supabase
+      .from("point_claims")
+      .select("*")
+      .eq("user_address", userAddress)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.warn("Failed to fetch point claim history:", error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error("getPointClaimHistory error:", err);
+    return [];
+  }
+}
+
+/**
+ * Record a reward/achievement earned by a user
+ */
+export async function recordUserReward(
+  userAddress: string,
+  rewardType: UserReward["reward_type"],
+  rewardId: string,
+  rewardName: string,
+  rewardDescription?: string,
+  iconUrl?: string
+): Promise<boolean> {
+  try {
+    const { error } = await supabase.from("user_rewards").insert({
+      user_address: userAddress,
+      reward_type: rewardType,
+      reward_id: rewardId,
+      reward_name: rewardName,
+      reward_description: rewardDescription,
+      icon_url: iconUrl,
+    });
+
+    // Ignore unique constraint errors (reward already exists)
+    if (error && (error as any).code === "23505") {
+      return true; // Already has this reward
+    }
+
+    if (error) {
+      console.warn("Failed to record user reward:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("recordUserReward error:", err);
+    return false;
+  }
+}
+
+/**
+ * Get all rewards earned by a user
+ */
+export async function getUserRewards(
+  userAddress: string
+): Promise<UserReward[]> {
+  try {
+    const { data, error } = await supabase
+      .from("user_rewards")
+      .select("*")
+      .eq("user_address", userAddress)
+      .order("earned_at", { ascending: false });
+
+    if (error) {
+      console.warn("Failed to fetch user rewards:", error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error("getUserRewards error:", err);
+    return [];
+  }
+}

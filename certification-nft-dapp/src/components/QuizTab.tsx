@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { QUIZZES, Quiz } from "@/lib/quizData";
 import { QuizRunner } from "./QuizRunner";
 import { Trophy, Clock, CheckCircle, BrainCircuit, Play } from "lucide-react";
-import { loadUserStats, saveUserStats } from "@/lib/supabaseService";
+import { loadUserStats, saveUserStats, recordPointClaim } from "@/lib/supabaseService";
 import { useContractState } from "@/hooks/useContractState";
 
 interface QuizTabProps {
@@ -124,6 +124,22 @@ export const QuizTab = ({ isDarkMode, userAddress, telegramUser }: QuizTabProps)
             console.log("👉 SAVE RESULT:", success);
 
             if (success) {
+                // Record the claim to point_claims table for audit trail
+                await recordPointClaim(
+                    userAddress,
+                    'quiz',
+                    activeQuiz.id,
+                    quizResult.points,
+                    1.0, // No bonus multiplier for quizzes
+                    {
+                        quiz_title: activeQuiz.title,
+                        score: quizResult.score,
+                        total: quizResult.total,
+                        max_points: activeQuiz.points,
+                        telegram_id: telegramUser?.id
+                    }
+                );
+
                 setCompletedQuizzes((prev) => [...prev, activeQuiz.id]);
                 setActiveQuizId(null);
                 setQuizResult(null);
