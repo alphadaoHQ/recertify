@@ -18,8 +18,8 @@ export function WelcomeModal({
     >
       <div
         className={`p-8 rounded-3xl max-w-md mx-4 text-center border shadow-[0_0_25px_rgba(88,28,135,0.45)] transition-all duration-500 transform ${isDarkMode
-            ? "bg-gray-900/90 border-purple-500/50 backdrop-blur-sm"
-            : "bg-white/90 border-purple-950/20 backdrop-blur-sm"
+          ? "bg-gray-900/90 border-purple-500/50 backdrop-blur-sm"
+          : "bg-white/90 border-purple-950/20 backdrop-blur-sm"
           } ${showWelcomeModal ? "scale-100 opacity-100" : "scale-95 opacity-0"} animate-fadeIn`}
       >
         <div className="mb-6">
@@ -29,7 +29,7 @@ export function WelcomeModal({
             <img
               src="/Recertify.png"
               alt="Alpha DAO logo"
-              className="w-18 h-18 animate-spinSlow"
+              className="w-18 h-18"
             />
           </div>
 

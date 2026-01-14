@@ -132,10 +132,10 @@ export function TasksTab({
       prev.map((t) =>
         t.id === id
           ? {
-              ...t,
-              progress: 100,
-              completed: true,
-            }
+            ...t,
+            progress: 100,
+            completed: true,
+          }
           : t,
       ),
     );
@@ -166,11 +166,10 @@ export function TasksTab({
 
   return (
     <div
-      className={`transition-all duration-300 ${
-        isTransitioning && previousTab === "tasks"
-          ? "opacity-50"
-          : "opacity-100"
-      }`}
+      className={`transition-all duration-300 ${isTransitioning && previousTab === "tasks"
+        ? "opacity-50"
+        : "opacity-100"
+        }`}
     >
       {/* Stats Dashboard */}
       <div className="rounded-2xl p-4 mb-4 border bg-gradient-to-r from-purple-700 via-purple-500 to-purple-950">
@@ -232,11 +231,10 @@ export function TasksTab({
                 <button
                   key={c}
                   onClick={() => setCategoryFilter(c)}
-                  className={`text-xs px-2 py-1 rounded-full border ${
-                    categoryFilter === c
-                      ? "bg-[#1da1f2] text-white border-transparent"
-                      : "bg-transparent text-[#536471]"
-                  }`}
+                  className={`text-xs px-2 py-1 rounded-full border ${categoryFilter === c
+                    ? "bg-[#1da1f2] text-white border-transparent"
+                    : "bg-transparent text-[#536471]"
+                    }`}
                 >
                   {c}
                 </button>
@@ -247,93 +245,65 @@ export function TasksTab({
       </div>
 
       {/* Tasks list */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {filteredTasks.map((task) => (
-          <div
+          <button
             key={task.id}
-            className={`p-4 rounded-xl transition-all duration-200 border ${task.completed ? "border-[#1da1f2]/40 bg-[#1da1f2]/8" : isDarkMode ? "bg-[#192734] border-[#2f3336]" : "bg-white border-[#e6edf2]"}`}
+            onClick={() => !task.completed ? startTask(task.id) : !task.claimed ? claimTask(task.id) : null}
+            className={`w-full px-4 py-3 rounded-full transition-all duration-200 border flex items-center gap-3 hover:border-purple-500/60 ${task.completed
+              ? task.claimed
+                ? "border-gray-600/40 bg-gray-800/30"
+                : "border-purple-500/50 bg-purple-500/10"
+              : isDarkMode
+                ? "bg-[#0d0d0d] border-[#2f3336] hover:bg-[#1a1a1a]"
+                : "bg-white border-[#e6edf2] hover:bg-gray-50"
+              }`}
           >
-            <div className="flex items-start gap-3">
-              <div className="pt-1 flex-shrink-0">
-                {task.completed ? (
-                  <CheckCircle2 className="w-6 h-6 text-[#1da1f2]" />
-                ) : (
-                  <Circle
-                    className={`w-6 h-6 ${isDarkMode ? "text-[#536471]" : "text-[#bcc7cf]"}`}
-                  />
-                )}
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <h4
-                    className={`font-semibold text-sm ${task.completed ? "text-[#1da1f2] line-through" : isDarkMode ? "text-white" : "text-[#14171a]"}`}
-                  >
-                    {task.title}
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    {renderBadge(task.frequency)}
-                  </div>
-                </div>
-                <p
-                  className={`text-xs mt-1 ${isDarkMode ? "text-[#8899a6]" : "text-[#536471]"}`}
-                >
-                  {task.description}
-                </p>
-
-                {/* Progress bar (if needed) */}
-                <div className="mt-3">
-                  <div
-                    className={`${isDarkMode ? "bg-[#2f3336]" : "bg-[#e6edf2]"} h-2 rounded-full overflow-hidden`}
-                  >
-                    <div
-                      className="h-full bg-gradient-to-r from-[#1da1f2] to-[#6366f1] transition-all"
-                      style={{ width: `${task.progress}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-shrink-0 text-right pt-1 flex flex-col items-end gap-2">
-                <div className="flex items-center gap-1 justify-end">
-                  <Zap className="w-4 h-4 text-yellow-400" />
-                  <span
-                    className={`font-bold text-sm ${task.completed ? "text-[#1da1f2]" : "text-yellow-400"}`}
-                  >
-                    +{task.reward}
-                  </span>
-                </div>
-
-                {/* Action button */}
-                {!task.completed && (
-                  <button
-                    onClick={() => startTask(task.id)}
-                    className={`mt-2 px-3 py-1 text-xs rounded-md font-semibold ${isDarkMode ? "bg-[#1da1f2] text-white" : "bg-[#1da1f2] text-white"}`}
-                  >
-                    Start
-                  </button>
-                )}
-
-                {task.completed && !task.claimed && (
-                  <button
-                    onClick={() => claimTask(task.id)}
-                    className={`mt-2 px-3 py-1 text-xs rounded-md font-semibold ${isDarkMode ? "bg-yellow-400 text-black" : "bg-yellow-400 text-black"}`}
-                  >
-                    Claim
-                  </button>
-                )}
-
-                {task.claimed && (
-                  <button
-                    disabled
-                    className="mt-2 px-3 py-1 text-xs rounded-md font-semibold bg-gray-200 text-gray-500"
-                  >
-                    Claimed
-                  </button>
-                )}
-              </div>
+            {/* Icon */}
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${task.completed
+              ? "bg-purple-500/20"
+              : isDarkMode
+                ? "bg-[#1a1a1a]"
+                : "bg-gray-100"
+              }`}>
+              {task.completed ? (
+                <CheckCircle2 className="w-4 h-4 text-purple-400" />
+              ) : (
+                <Circle className={`w-5 h-5 ${isDarkMode ? "text-white" : "text-gray-700"}`} />
+              )}
             </div>
-          </div>
+
+            {/* Title */}
+            <div className="flex-1 min-w-0 text-left">
+              <h4
+                className={`font-medium text-xs truncate ${task.completed
+                  ? task.claimed
+                    ? "text-gray-500 line-through"
+                    : "text-white"
+                  : isDarkMode
+                    ? "text-white"
+                    : "text-[#14171a]"
+                  }`}
+              >
+                {task.title}
+              </h4>
+            </div>
+
+            {/* Points */}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span
+                className={`font-semibold text-sm ${task.completed
+                  ? task.claimed
+                    ? "text-gray-500"
+                    : "text-purple-400"
+                  : "text-white"
+                  }`}
+              >
+                +{task.reward}
+              </span>
+            </div>
+          </button>
         ))}
       </div>
 
