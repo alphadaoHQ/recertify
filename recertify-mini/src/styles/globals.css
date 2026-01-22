@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Material Design 3 CSS Custom Properties */
+:root {
+  /* Light Theme */
+  --md-sys-color-primary: #6750A4;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #EADDFF;
+  --md-sys-color-on-primary-container: #21005D;
+  --md-sys-color-secondary: #625B71;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #E8DEF8;
+  --md-sys-color-on-secondary-container: #1D192B;
+  --md-sys-color-tertiary: #7D5260;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #FFD8E4;
+  --md-sys-color-on-tertiary-container: #31111D;
+  --md-sys-color-surface: #FEF7FF;
+  --md-sys-color-on-surface: #1D1B20;
+  --md-sys-color-surface-variant: #E7E0EC;
+  --md-sys-color-on-surface-variant: #49454F;
+  --md-sys-color-outline: #79747E;
+  --md-sys-color-outline-variant: #CAC4D0;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-inverse-surface: #322F35;
+  --md-sys-color-inverse-on-surface: #F5EFF7;
+  --md-sys-color-inverse-primary: #CEACFD;
+  --md-sys-color-surface-dim: #DDD8E1;
+  --md-sys-color-surface-bright: #FEF7FF;
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #F7F2FA;
+  --md-sys-color-surface-container: #F1ECF4;
+  --md-sys-color-surface-container-high: #ECE6F0;
+  --md-sys-color-surface-container-highest: #E6E0E9;
+  --md-sys-color-background: #FEF7FF;
+  --md-sys-color-on-background: #1D1B20;
+  --md-sys-color-error: #BA1A1A;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #FFDAD6;
+  --md-sys-color-on-error-container: #410002;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme */
+  --md-sys-color-primary: #D0BCFF;
+  --md-sys-color-on-primary: #381E72;
+  --md-sys-color-primary-container: #4F378B;
+  --md-sys-color-on-primary-container: #EADDFF;
+  --md-sys-color-secondary: #CCC2DC;
+  --md-sys-color-on-secondary: #332D41;
+  --md-sys-color-secondary-container: #4A4458;
+  --md-sys-color-on-secondary-container: #E8DEF8;
+  --md-sys-color-tertiary: #EFB8C8;
+  --md-sys-color-on-tertiary: #492532;
+  --md-sys-color-tertiary-container: #633B48;
+  --md-sys-color-on-tertiary-container: #FFD8E4;
+  --md-sys-color-surface: #121212;
+  --md-sys-color-on-surface: #E6E0E9;
+  --md-sys-color-surface-variant: #49454F;
+  --md-sys-color-on-surface-variant: #CAC4D0;
+  --md-sys-color-outline: #938F99;
+  --md-sys-color-outline-variant: #49454F;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-inverse-surface: #E6E0E9;
+  --md-sys-color-inverse-on-surface: #322F35;
+  --md-sys-color-inverse-primary: #6750A4;
+  --md-sys-color-surface-dim: #121212;
+  --md-sys-color-surface-bright: #38353A;
+  --md-sys-color-surface-container-lowest: #0F0D13;
+  --md-sys-color-surface-container-low: #1D1B20;
+  --md-sys-color-surface-container: #211F26;
+  --md-sys-color-surface-container-high: #2B2930;
+  --md-sys-color-surface-container-highest: #36343B;
+  --md-sys-color-background: #121212;
+  --md-sys-color-on-background: #E6E0E9;
+  --md-sys-color-error: #FFB4AB;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000A;
+  --md-sys-color-on-error-container: #FFDAD6;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+}
+
+body {
+  color: var(--md-sys-color-on-background);
+  background: var(--md-sys-color-background);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Telegram Mini App Specific */
+.telegram-web-app {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Safe Areas */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(env(safe-area-inset-top), 0px);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+}
+
+/* Material Design 3 Elevation */
+.md3-elevation-level1 {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+
+.md3-elevation-level2 {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+
+.md3-elevation-level3 {
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+}
+
+.md3-elevation-level4 {
+  box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3), 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+}
+
+.md3-elevation-level5 {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Material Design 3 Shape */
+.md3-shape-corner-none {
+  border-radius: 0px;
+}
+
+.md3-shape-corner-extra-small {
+  border-radius: 4px;
+}
+
+.md3-shape-corner-small {
+  border-radius: 8px;
+}
+
+.md3-shape-corner-medium {
+  border-radius: 12px;
+}
+
+.md3-shape-corner-large {
+  border-radius: 16px;
+}
+
+.md3-shape-corner-extra-large {
+  border-radius: 28px;
+}
+
+/* Motion System */
+.md3-motion-easing-emphasized {
+  cubic-bezier: 0.2, 0.0, 0.0, 1.0);
+}
+
+.md3-motion-easing-standard {
+  cubic-bezier: 0.2, 0.0, 0.0, 1.0);
+}
+
+.md3-motion-duration-short1 {
+  transition-duration: 50ms;
+}
+
+.md3-motion-duration-short2 {
+  transition-duration: 100ms;
+}
+
+.md3-motion-duration-short3 {
+  transition-duration: 150ms;
+}
+
+.md3-motion-duration-short4 {
+  transition-duration: 200ms;
+}
+
+.md3-motion-duration-medium1 {
+  transition-duration: 250ms;
+}
+
+.md3-motion-duration-medium2 {
+  transition-duration: 300ms;
+}
+
+.md3-motion-duration-medium3 {
+  transition-duration: 350ms;
+}
+
+.md3-motion-duration-medium4 {
+  transition-duration: 400ms;
+}
+
+.md3-motion-duration-long1 {
+  transition-duration: 450ms;
+}
+
+.md3-motion-duration-long2 {
+  transition-duration: 500ms;
+}
+
+.md3-motion-duration-long3 {
+  transition-duration: 550ms;
+}
+
+.md3-motion-duration-long4 {
+  transition-duration: 600ms;
+}
