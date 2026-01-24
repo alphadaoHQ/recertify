@@ -3,7 +3,7 @@
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Home, Quiz, EmojiEvents, Gallery, Task } from '@mui/icons-material';
+import { Home, HelpOutline as QuizIcon, EmojiEvents, Person } from '@mui/icons-material';
 
 interface NavigationBarProps {
   activeTab: string;
@@ -12,10 +12,9 @@ interface NavigationBarProps {
 
 const tabs = [
   { id: 'home', label: 'Home', icon: Home },
-  { id: 'tasks', label: 'Tasks', icon: Task },
-  { id: 'quiz', label: 'Quiz', icon: Quiz },
+  { id: 'quiz', label: 'Quiz', icon: QuizIcon },
   { id: 'rewards', label: 'Rewards', icon: EmojiEvents },
-  { id: 'gallery', label: 'Gallery', icon: Gallery },
+  { id: 'profile', label: 'Profile', icon: Person },
 ];
 
 export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) => {
