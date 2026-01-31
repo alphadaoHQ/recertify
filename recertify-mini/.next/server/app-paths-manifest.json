@@ -3,6 +3,5 @@
   "/quiz/page": "app/quiz/page.js",
   "/leaderboard/page": "app/leaderboard/page.js",
   "/tasks/page": "app/tasks/page.js",
-  "/project/[id]/page": "app/project/[id]/page.js",
   "/profile/page": "app/profile/page.js"
 }

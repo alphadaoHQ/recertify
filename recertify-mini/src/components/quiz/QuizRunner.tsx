@@ -15,6 +15,10 @@ interface QuizState {
   isAnswered: boolean;
   score: number;
   isComplete: boolean;
+  startTime: number;
+  aiFeedback?: any;
+  learningProgress?: any;
+  fraudAnalysis?: any;
 }
 
 export const QuizRunner = () => {
@@ -30,10 +34,13 @@ export const QuizRunner = () => {
     isAnswered: false,
     score: 0,
     isComplete: false,
+    startTime: Date.now(),
   });
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [sessionId] = useState(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!quiz) {
     return (
@@ -74,12 +81,54 @@ export const QuizRunner = () => {
     setShowConfirmDialog(false);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (isLastQuestion) {
-      setQuizState({
-        ...quizState,
-        isComplete: true,
-      });
+      setIsSubmitting(true);
+      
+      try {
+        // Submit quiz with AI integration
+        const endTime = Date.now();
+        const timeSpent = Math.floor((endTime - quizState.startTime) / 1000); // in seconds
+        
+        const response = await fetch('/api/quizzes/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-user-id': 'demo_user_123', // In production: get from Telegram
+          },
+          body: JSON.stringify({
+            quizId,
+            userId: 'demo_user_123',
+            answers: quizState.answers,
+            timeSpent,
+            startTime: quizState.startTime,
+            endTime,
+            sessionId,
+          }),
+        });
+
+        const result = await response.json();
+        
+        if (result.blocked) {
+          // Handle fraud detection
+          alert(`Submission blocked: ${result.message}`);
+          return;
+        }
+
+        setQuizState({
+          ...quizState,
+          isComplete: true,
+          aiFeedback: result.aiFeedback,
+          learningProgress: result.learningProgress,
+          fraudAnalysis: result.fraudAnalysis,
+        });
+        
+      } catch (error) {
+        console.error('Quiz submission failed:', error);
+        alert('Failed to submit quiz. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     } else {
       setQuizState({
         ...quizState,
@@ -97,12 +146,21 @@ export const QuizRunner = () => {
       isAnswered: false,
       score: 0,
       isComplete: false,
+      startTime: Date.now(),
     });
     setSelectedAnswer(null);
   };
 
   if (quizState.isComplete) {
-    return <QuizResults quiz={quiz} score={quizState.score} onRestart={handleRestart} onBack={() => router.back()} />;
+    return <QuizResults 
+      quiz={quiz} 
+      score={quizState.score} 
+      aiFeedback={quizState.aiFeedback}
+      learningProgress={quizState.learningProgress}
+      fraudAnalysis={quizState.fraudAnalysis}
+      onRestart={handleRestart} 
+      onBack={() => router.back()} 
+    />;
   }
 
   const correctAnswer = selectedAnswer === currentQuestion.correctAnswer;
@@ -286,10 +344,10 @@ export const QuizRunner = () => {
           <MuiButton
             variant="contained"
             fullWidth
-            disabled={!quizState.isAnswered}
+            disabled={!quizState.isAnswered || isSubmitting}
             onClick={handleNext}
           >
-            {isLastQuestion ? 'See Results' : 'Next Question'}
+            {isSubmitting ? 'Submitting...' : (isLastQuestion ? 'See Results' : 'Next Question')}
           </MuiButton>
         </Box>
 
@@ -317,17 +375,21 @@ export const QuizRunner = () => {
 interface QuizResultsProps {
   quiz: EnhancedQuiz;
   score: number;
+  aiFeedback?: any[];
+  learningProgress?: any;
+  fraudAnalysis?: any;
   onRestart: () => void;
   onBack: () => void;
 }
 
-const QuizResults = ({ quiz, score, onRestart, onBack }: QuizResultsProps) => {
+const QuizResults = ({ quiz, score, aiFeedback, learningProgress, fraudAnalysis, onRestart, onBack }: QuizResultsProps) => {
   const theme = useTheme();
   const router = useRouter();
   const percentage = Math.round((score / quiz.questions.length) * 100);
   const passed = percentage >= 70;
   const [pointsEarned, setPointsEarned] = useState(0);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [showAIFeedback, setShowAIFeedback] = useState(false);
 
   // Calculate rewards
   useEffect(() => {
@@ -335,9 +397,11 @@ const QuizResults = ({ quiz, score, onRestart, onBack }: QuizResultsProps) => {
       const basePoints = 50;
       const bonusPoints = Math.round(percentage * 0.5);
       const perfectBonus = percentage === 100 ? 100 : 0;
-      setPointsEarned(basePoints + bonusPoints + perfectBonus);
+      const fraudPenalty = fraudAnalysis ? Math.floor(fraudAnalysis.riskScore * 0.5) : 0;
+      const totalPoints = Math.max(basePoints + bonusPoints + perfectBonus - fraudPenalty, Math.floor(basePoints * 0.3));
+      setPointsEarned(totalPoints);
     }
-  }, [passed, percentage]);
+  }, [passed, percentage, fraudAnalysis]);
 
   return (
     <motion.div
@@ -417,9 +481,101 @@ const QuizResults = ({ quiz, score, onRestart, onBack }: QuizResultsProps) => {
                   ~{quiz.estimatedTime} min
                 </Typography>
               </Box>
+              {fraudAnalysis && (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="bodyMedium">Security Check:</Typography>
+                  <Chip 
+                    label={fraudAnalysis.warningLevel === 'none' ? 'Passed' : `Risk: ${fraudAnalysis.warningLevel}`}
+                    size="small" 
+                    color={fraudAnalysis.warningLevel === 'none' ? 'success' : 'warning'}
+                  />
+                </Box>
+              )}
             </Stack>
           </CardContent>
         </Card>
+
+        {/* AI Feedback Section */}
+        {aiFeedback && aiFeedback.length > 0 && (
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="titleMedium" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  🤖 AI Learning Coach
+                </Typography>
+                <MuiButton 
+                  size="small" 
+                  onClick={() => setShowAIFeedback(!showAIFeedback)}
+                >
+                  {showAIFeedback ? 'Hide' : 'Show'} Feedback
+                </MuiButton>
+              </Box>
+              
+              {showAIFeedback && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <Stack spacing={2}>
+                    {aiFeedback.slice(0, 3).map((feedback: any, index: number) => (
+                      <Box 
+                        key={index}
+                        sx={{ 
+                          p: 2, 
+                          background: feedback.isCorrect ? '#E8F5E9' : '#FFF3E0',
+                          borderRadius: 1,
+                          borderLeft: `4px solid ${feedback.isCorrect ? '#4CAF50' : '#FF9800'}`
+                        }}
+                      >
+                        <Typography variant="labelMedium" sx={{ fontWeight: 700, mb: 1 }}>
+                          Question {index + 1}: {feedback.isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                        </Typography>
+                        <Typography variant="bodySmall" sx={{ mb: 1 }}>
+                          {feedback.feedback}
+                        </Typography>
+                        {feedback.suggestions && feedback.suggestions.length > 0 && (
+                          <Typography variant="bodySmall" sx={{ fontStyle: 'italic', color: theme.palette.text.secondary }}>
+                            💡 {feedback.suggestions[0]}
+                          </Typography>
+                        )}
+                      </Box>
+                    ))}
+                  </Stack>
+                </motion.div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Learning Progress */}
+        {learningProgress && (
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="titleMedium" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                📈 Learning Progress
+              </Typography>
+              <Stack spacing={2}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="bodyMedium">Overall Progress:</Typography>
+                  <Typography variant="bodyMedium" sx={{ fontWeight: 700 }}>
+                    {Math.round(learningProgress.overallProgress)}%
+                  </Typography>
+                </Box>
+                {learningProgress.recommendedTopics && learningProgress.recommendedTopics.length > 0 && (
+                  <Box>
+                    <Typography variant="bodyMedium" sx={{ mb: 1 }}>Next Topics:</Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {learningProgress.recommendedTopics.slice(0, 3).map((topic: string) => (
+                        <Chip key={topic} label={topic} size="small" variant="outlined" />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
 
          {/* Actions */}
          <Stack spacing={1.5}>

@@ -5,9 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:export": "next build && next export",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy:s3": "./deploy-s3-lambda.sh deploy",
+    "deploy:frontend": "./deploy-s3-lambda.sh frontend-only",
+    "deploy:lambda": "./deploy-s3-lambda.sh lambda-only",
+    "health-check": "./deploy-s3-lambda.sh health-check"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

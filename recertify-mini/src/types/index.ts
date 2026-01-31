@@ -103,3 +103,60 @@ export interface TelegramUser {
   language_code?: string;
   photo_url?: string;
 }
+
+// AI Features Types
+export interface AIFeedback {
+  id: string;
+  userId: string;
+  quizId: string;
+  questionId: string;
+  userAnswer: number;
+  correctAnswer: number;
+  isCorrect: boolean;
+  feedback: string;
+  suggestions: string[];
+  timestamp: string;
+}
+
+export interface LearningState {
+  userId: string;
+  topicScores: Record<string, {
+    totalAttempts: number;
+    correctAnswers: number;
+    averageScore: number;
+    lastAttempt: string;
+    masteryLevel: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  }>;
+  weakAreas: string[];
+  recommendedTopics: string[];
+  overallProgress: number;
+  completed: boolean;
+  lastUpdated: string;
+}
+
+export interface FraudDetection {
+  userId: string;
+  sessionId: string;
+  quizId: string;
+  riskScore: number;
+  flags: {
+    fastCompletion: boolean;
+    identicalRetries: boolean;
+    impossibleAccuracy: boolean;
+    suspiciousPattern: boolean;
+  };
+  timeSpent: number;
+  averageTimePerQuestion: number;
+  retryCount: number;
+  timestamp: string;
+}
+
+export interface QuizSubmission {
+  quizId: string;
+  userId: string;
+  answers: number[];
+  timeSpent: number;
+  startTime: number;
+  endTime: number;
+  sessionId: string;
+}

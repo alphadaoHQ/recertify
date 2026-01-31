@@ -1,0 +1,368 @@
+# Serverless Framework configuration for AWS Lambda deployment
+service: recertify-mini
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'prod'}
+  memorySize: 1024
+  timeout: 30
+  
+  # Environment variables
+  environment:
+    NODE_ENV: production
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    DYNAMODB_TABLE_PREFIX: ${self:service}-${self:provider.stage}-
+    REDIS_ENDPOINT: ${cf:${self:service}-infrastructure-${self:provider.stage}.RedisEndpoint}
+    
+  # IAM permissions
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-${self:provider.stage}-*"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-${self:provider.stage}-*/index/*"
+        
+        # Bedrock permissions for AI
+        - Effect: Allow
+          Action:
+            - bedrock:InvokeModel
+            - bedrock:InvokeModelWithResponseStream
+          Resource:
+            - "arn:aws:bedrock:${self:provider.region}::foundation-model/*"
+        
+        # Secrets Manager permissions
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource:
+            - "arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:service}/${self:provider.stage}/*"
+        
+        # CloudWatch Logs permissions
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - "arn:aws:logs:${self:provider.region}:*:*"
+
+  # VPC configuration for Redis access
+  vpc:
+    securityGroupIds:
+      - ${cf:${self:service}-infrastructure-${self:provider.stage}.LambdaSecurityGroup}
+    subnetIds:
+      - ${cf:${self:service}-infrastructure-${self:provider.stage}.PrivateSubnet1}
+      - ${cf:${self:service}-infrastructure-${self:provider.stage}.PrivateSubnet2}
+
+# Lambda functions
+functions:
+  # Next.js application
+  nextjs:
+    handler: .next/standalone/server.js
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: 
+              - https://t.me
+              - https://web.telegram.org
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Telegram-Init-Data
+              - X-Telegram-Hash
+            allowCredentials: true
+    environment:
+      NEXT_PUBLIC_API_URL: https://${self:custom.domainName}
+    reservedConcurrency: 100
+    provisionedConcurrency: 10
+
+  # AI Feedback Service
+  aiFeedback:
+    handler: src/lambda/ai-feedback.handler
+    events:
+      - http:
+          path: /api/ai/feedback
+          method: post
+          cors: true
+    environment:
+      BEDROCK_MODEL_ID: anthropic.claude-3-sonnet-20240229-v1:0
+      AI_FEEDBACK_ENABLED: true
+    reservedConcurrency: 50
+    timeout: 60
+
+  # Adaptive Learning Engine
+  adaptiveLearning:
+    handler: src/lambda/adaptive-learning.handler
+    events:
+      - http:
+          path: /api/learning/state
+          method: ANY
+          cors: true
+    environment:
+      LEARNING_ENGINE_ENABLED: true
+    reservedConcurrency: 30
+
+  # Fraud Detection System
+  fraudDetection:
+    handler: src/lambda/fraud-detection.handler
+    events:
+      - http:
+          path: /api/fraud/check
+          method: post
+          cors: true
+    environment:
+      FRAUD_DETECTION_ENABLED: true
+      FRAUD_RISK_THRESHOLD: 70
+    reservedConcurrency: 20
+
+  # Quiz Submission (Integrated)
+  quizSubmission:
+    handler: src/lambda/quiz-submission.handler
+    events:
+      - http:
+          path: /api/quizzes/submit
+          method: post
+          cors: true
+    environment:
+      INTEGRATE_AI_FEATURES: true
+    reservedConcurrency: 100
+    timeout: 60
+
+  # Health Check
+  healthCheck:
+    handler: src/lambda/health-check.handler
+    events:
+      - http:
+          path: /api/health
+          method: get
+          cors: true
+    reservedConcurrency: 5
+
+  # Metrics Endpoint
+  metrics:
+    handler: src/lambda/metrics.handler
+    events:
+      - http:
+          path: /api/metrics
+          method: get
+          cors: false
+    reservedConcurrency: 5
+
+  # Telegram Webhook
+  telegramWebhook:
+    handler: src/lambda/telegram-webhook.handler
+    events:
+      - http:
+          path: /api/telegram/webhook
+          method: post
+          cors: false
+    environment:
+      TELEGRAM_BOT_TOKEN: ${ssm:/recertify-mini/${self:provider.stage}/telegram-bot-token}
+    reservedConcurrency: 20
+
+# Custom configuration
+custom:
+  # Domain configuration
+  domainName: 
+    prod: api.recertify-mini.com
+    staging: api-staging.recertify-mini.com
+    dev: api-dev.recertify-mini.com
+  
+  # Webpack configuration for Next.js
+  webpack:
+    webpackConfig: ./webpack.lambda.js
+    includeModules: true
+    packager: npm
+    excludeFiles: src/**/*.test.js
+
+  # DynamoDB configuration
+  dynamodb:
+    stages:
+      - dev
+      - staging
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      seed: true
+    seed:
+      domain:
+        sources:
+          - table: ${self:service}-${self:provider.stage}-users
+            sources: [./seeds/users.json]
+
+  # API Gateway configuration
+  apiGateway:
+    restApiId: ${cf:${self:service}-infrastructure-${self:provider.stage}.RestApiId}
+    restApiRootResourceId: ${cf:${self:service}-infrastructure-${self:provider.stage}.RestApiRootResourceId}
+    
+  # CloudFormation outputs
+  output:
+    handler: scripts/output.handler
+    file: .serverless/stack-outputs.json
+
+# Resources (DynamoDB tables, etc.)
+resources:
+  Resources:
+    # DynamoDB Tables
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-users
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        Tags:
+          - Key: Service
+            Value: ${self:service}
+          - Key: Stage
+            Value: ${self:provider.stage}
+
+    QuizAttemptsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-quiz-attempts
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+          - AttributeName: quizId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: QuizIdIndex
+            KeySchema:
+              - AttributeName: quizId
+                KeyType: HASH
+              - AttributeName: timestamp
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+
+    LearningStatesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-learning-states
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+
+    FraudLogsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-fraud-logs
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+
+    AIFeedbackLogsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-ai-feedback-logs
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+
+  # CloudFormation Outputs
+  Outputs:
+    ApiGatewayRestApiId:
+      Value:
+        Ref: ApiGatewayRestApi
+      Export:
+        Name: ${self:service}-${self:provider.stage}-restApiId
+
+    ApiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      Export:
+        Name: ${self:service}-${self:provider.stage}-rootResourceId
+
+    ServiceEndpoint:
+      Value:
+        Fn::Join:
+          - ""
+          - - "https://"
+            - Ref: ApiGatewayRestApi
+            - ".execute-api."
+            - ${self:provider.region}
+            - ".amazonaws.com/"
+            - ${self:provider.stage}
+      Export:
+        Name: ${self:service}-${self:provider.stage}-serviceEndpoint
+
+# Plugins
+plugins:
+  - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-domain-manager
+  - serverless-plugin-warmup
+  - serverless-plugin-optimize
+  - serverless-stack-output
