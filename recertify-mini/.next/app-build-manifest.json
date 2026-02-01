@@ -12,32 +12,6 @@
       "static/chunks/vendors.js",
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
-    ],
-    "/leaderboard/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/vendors.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/leaderboard/page.js"
-    ],
-    "/profile/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/vendors.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/profile/page.js"
-    ],
-    "/quiz/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/vendors.js",
-      "static/chunks/main-app.js",
-      "static/chunks/_app-pages-browser_src_lib_quizData_ts.js",
-      "static/chunks/app/quiz/page.js"
-    ],
-    "/quiz/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/vendors.js",
-      "static/chunks/main-app.js",
-      "static/chunks/_app-pages-browser_src_lib_quizData_ts.js",
-      "static/chunks/app/quiz/[id]/page.js"
     ]
   }
 }
